@@ -3,13 +3,13 @@
   <Navbar />
   <AdminBar
     v-if="!loading && profile?.role === 'admin'"
-    class="mt-4 mx-2"
+    class="mt-5"
     :voting="voting"
   />
   <div v-if="!loading" class="container mx-auto px-2">
-    <BookInput v-if="!voting && userSession" class="mt-4" />
-    <VotingBookList v-if="voting && userSession" class="mt-6" />
-    <BookList v-else class="mt-6" />
+    <BookInput v-if="!voting && userSession" class="mt-5" />
+    <VotingBookList v-if="voting && userSession" class="mt-5" />
+    <BookList v-else class="mt-5" />
   </div>
 </template>
 

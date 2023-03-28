@@ -1,5 +1,5 @@
 <template>
-  <div class="card max-w-4xl mx-auto shadow-xl bg-base-200">
+  <div class="card max-w-7xl mx-auto shadow-md shadow-base-300 bg-base-200">
     <div class="card-body p-4">
       <h2 class="card-title">Vote</h2>
       <h3 class="mb-2">
@@ -44,7 +44,7 @@
               </div>
               <button
                 v-if="book.vote"
-                class="btn btn-sm btn-success w-10 ml-auto"
+                class="btn btn-sm w-10 ml-auto"
                 @click="handleVote(book)"
                 :disabled="book.loading"
               >
@@ -52,7 +52,7 @@
               </button>
               <button
                 v-else
-                class="btn btn-sm btn-success w-10 ml-auto"
+                class="btn btn-sm w-10 ml-auto"
                 @click="handleVote(book)"
                 :disabled="book.loading || voteCount >= voteLimit"
               >

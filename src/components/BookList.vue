@@ -1,5 +1,5 @@
 <template>
-  <div class="card max-w-4xl mx-auto shadow-xl bg-base-200">
+  <div class="card max-w-7xl mx-auto shadow-md shadow-base-300 bg-base-200">
     <div class="card-body p-4">
       <h2 class="card-title mb-2">
         Submitted books
