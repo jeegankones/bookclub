@@ -21,7 +21,7 @@
             </div>
           </Transition>
           <div class="card-body p-4">
-            <div class="flex flex-row gap-4 items-center cursor-pointer">
+            <div class="flex flex-row gap-4 items-center">
               <div
                 v-if="book.small_thumbnail"
                 class="flex-none w-24 rounded overflow-hidden"
@@ -105,7 +105,7 @@ onMounted(async () => {
     bookList.value.find((book) => book.id === vote.book_id).vote = true;
   });
 
-  refreshVoteCounts();
+  await refreshVoteCounts();
 
   channel = supabase
     .channel('votes-all-channel')
