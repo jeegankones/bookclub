@@ -19,3 +19,9 @@
     }
   }
 }
+
+@layer components {
+  .collapse-arrow .collapse-title:after {
+    right: 0.25rem;
+  }
+}

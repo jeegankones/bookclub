@@ -31,6 +31,9 @@ import { supabase, userSession } from '../lib/supabase';
 async function signInWithDiscord() {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'discord',
+    options: {
+      redirectTo: import.meta.env.VITE_APP_SUPABASE_REDIRECT_URL,
+    },
   });
 }
 

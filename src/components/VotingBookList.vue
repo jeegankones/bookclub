@@ -61,7 +61,7 @@
             </div>
             <div
               v-if="book.description"
-              class="collapse collapse-arrow rounded-box"
+              class="collapse collapse-arrow rounded-box mt-1"
             >
               <input type="checkbox" class="min-h-8" />
               <div
