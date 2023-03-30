@@ -95,16 +95,7 @@ let channel;
 
 onMounted(async () => {
   await updateBookList();
-
-  const { data: votes } = await supabase
-    .from('votes')
-    .select('*')
-    .eq('profile_id', profile.value.id);
-  voteCount.value = votes.length;
-  votes.map((vote) => {
-    bookList.value.find((book) => book.id === vote.book_id).vote = true;
-  });
-
+  await updateUserVotes();
   await refreshVoteCounts();
 
   channel = supabase
@@ -114,12 +105,37 @@ onMounted(async () => {
       { event: '*', schema: 'public', table: 'votes' },
       refreshVoteCounts
     )
+    .on(
+      'postgres_changes',
+      {
+        event: '*',
+        schema: 'public',
+        table: 'votes',
+        filter: `profile_id=eq.${profile.value.id}`,
+      },
+      updateUserVotes
+    )
     .subscribe();
 });
 
 onBeforeUnmount(async () => {
   await supabase.removeChannel(channel);
 });
+
+async function updateUserVotes() {
+  const { data: votes } = await supabase
+    .from('votes')
+    .select('*')
+    .eq('profile_id', profile.value.id);
+  voteCount.value = votes.length;
+  votes.map((vote) => {
+    bookList.value.find((book) => book.id === vote.book_id).vote = true;
+  });
+  const voteBookIds = votes.map((vote) => vote.book_id);
+  bookList.value
+    .filter((book) => !voteBookIds.includes(book.id))
+    .map((book) => (book.vote = false));
+}
 
 async function refreshVoteCounts() {
   const { data: voteCounts, error } = await supabase.rpc(
@@ -155,14 +171,14 @@ function deleteVote(book) {
 async function handleVote(book) {
   book.vote = !book.vote;
   book.loading = true;
-  let data, error;
+  let error;
   if (book.vote) {
-    ({ data, error } = await insertVote(book));
+    ({ error } = await insertVote(book));
     if (!error) {
       voteCount.value++;
     }
   } else {
-    ({ data, error } = await deleteVote(book));
+    ({ error } = await deleteVote(book));
     if (!error) {
       voteCount.value--;
     }
