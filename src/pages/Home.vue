@@ -1,4 +1,5 @@
 <template>
+  <Modal />
   <Alert />
   <Navbar />
   <AdminBar
@@ -22,6 +23,9 @@ import { setProfile, supabase, userSession, profile } from '../lib/supabase';
 import { onBeforeMount, onBeforeUnmount, onMounted, ref } from 'vue';
 import VotingBookList from '../components/VotingBookList.vue';
 import Alert from '../components/Alert.vue';
+import Modal from '../components/Modal.vue';
+import VotingStartModal from '../components/VoteStartModal.vue';
+import { useModal } from '../stores/useModal';
 
 const voting = ref(null);
 const loading = ref(null);
@@ -49,6 +53,10 @@ onMounted(async () => {
       (payload) => {
         if (payload.new.setting === 'voting') {
           voting.value = payload.new.value;
+          if (voting.value) {
+            console.log(VotingStartModal);
+            useModal.open(VotingStartModal);
+          }
         }
       }
     )

@@ -12,7 +12,7 @@
           class="card bg-base-100"
           :class="{ 'outline outline-success': book.vote }"
         >
-          <Transition name="grow-shrink">
+          <Transition name="bounce">
             <div
               v-if="book.voteCount"
               class="absolute flex justify-center items-center -top-1 -left-1 bg-error rounded-full w-8 h-8 font-bold"
@@ -86,7 +86,7 @@ import { supabase, userSession, profile } from '../lib/supabase';
 import { fetchBooks } from '../utils/fetchBooks';
 import { formatDateYear } from '../utils/formatDateYear';
 import _debounce from 'lodash/debounce';
-import { alertStore } from '../stores/alertStore';
+import { useAlert } from '../stores/useAlert';
 
 const bookList = ref(null);
 const voteCount = ref(0);
@@ -184,7 +184,7 @@ async function handleVote(book) {
     }
   }
   if (error) {
-    alertStore.newAlert();
+    useAlert.newAlert();
     book.vote = !book.vote;
   }
   book.loading = false;
@@ -195,15 +195,3 @@ async function updateBookList() {
   bookList.value = data;
 }
 </script>
-
-<style>
-.grow-shrink-enter-active,
-.grow-shrink-leave-active {
-  @apply transition-all;
-}
-.grow-shrink-enter-from,
-.grow-shrink-leave-to {
-  @apply opacity-0;
-  @apply scale-0;
-}
-</style>

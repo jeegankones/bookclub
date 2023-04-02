@@ -6,14 +6,14 @@
         <div>
           <button
             v-if="voting"
-            class="btn btn-sm btn-error"
+            class="btn btn-sm btn-error mr-2"
             @click="setVoting(false)"
           >
             End voting
           </button>
           <button
             v-else
-            class="btn btn-sm btn-success"
+            class="btn btn-sm btn-success mr-2"
             @click="setVoting(true)"
           >
             Start voting

@@ -1,19 +1,19 @@
 <template>
   <Transition>
     <div
-      v-if="alertStore.show"
+      v-if="useAlert.show"
       class="alert alert-error fixed bottom-0 z-50 shadow-lg"
     >
       <div>
         <i class="fa-solid fa-circle-exclamation"></i>
-        <span>{{ alertStore.message }}</span>
+        <span>{{ useAlert.message }}</span>
       </div>
     </div>
   </Transition>
 </template>
 
 <script setup>
-import { alertStore } from '../stores/alertStore';
+import { useAlert } from '../stores/useAlert';
 </script>
 
 <style>

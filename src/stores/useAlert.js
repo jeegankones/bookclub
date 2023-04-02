@@ -1,6 +1,6 @@
 import { reactive } from 'vue';
 
-export const alertStore = reactive({
+export const useAlert = reactive({
   show: false,
   message: 'There was an error, please try again.',
   newAlert(message) {
