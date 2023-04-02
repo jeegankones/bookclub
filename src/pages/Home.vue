@@ -26,6 +26,7 @@ import Alert from '../components/Alert.vue';
 import Modal from '../components/Modal.vue';
 import VotingStartModal from '../components/VoteStartModal.vue';
 import { useModal } from '../stores/useModal';
+import { useBookList } from '../stores/useBookList';
 
 const voting = ref(null);
 const loading = ref(null);
@@ -45,6 +46,8 @@ onBeforeMount(async () => {
 });
 
 onMounted(async () => {
+  await useBookList.updateBookList();
+
   channel = supabase
     .channel('home-settings-change-channel')
     .on(

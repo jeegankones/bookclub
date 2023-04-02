@@ -3,10 +3,16 @@
     <div class="card-body p-4">
       <h2 class="card-title mb-2">
         Submitted books
-        <span v-if="bookList">({{ bookList.length }})</span>
+        <span v-if="useBookList.bookList"
+          >({{ useBookList.bookList.length }})</span
+        >
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-3">
-        <div v-for="book in bookList" :key="book.id" class="card bg-base-100">
+        <div
+          v-for="book in useBookList.bookList"
+          :key="book.id"
+          class="card bg-base-100"
+        >
           <div class="card-body p-4">
             <div class="flex flex-row gap-4 items-center">
               <div
@@ -62,28 +68,25 @@
 </template>
 
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { onBeforeUnmount, onMounted } from 'vue';
 import { supabase, userSession, profile } from '../lib/supabase';
-import { fetchBooks } from '../utils/fetchBooks';
 import { formatDateYear } from '../utils/formatDateYear';
+import { useBookList } from '../stores/useBookList';
 
-const bookList = ref(null);
 let channel;
 
 onMounted(async () => {
-  await updateBookList();
-
   channel = supabase
     .channel('book-list-change-channel')
     .on(
       'postgres_changes',
       { event: 'INSERT', schema: 'public', table: 'books' },
-      updateBookList
+      useBookList.updateBookList
     )
     .on(
       'postgres_changes',
       { event: 'UPDATE', schema: 'public', table: 'books' },
-      updateBookList
+      useBookList.updateBookList
     )
     .subscribe();
 });
@@ -91,11 +94,6 @@ onMounted(async () => {
 onBeforeUnmount(async () => {
   await supabase.removeChannel(channel);
 });
-
-async function updateBookList() {
-  const { data } = await fetchBooks();
-  bookList.value = data;
-}
 
 async function archiveBook(bookId) {
   await supabase.from('books').update({ archived: true }).eq('id', bookId);

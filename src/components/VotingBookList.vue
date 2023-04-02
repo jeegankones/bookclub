@@ -7,7 +7,7 @@
       </h3>
       <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-3">
         <div
-          v-for="book in bookList"
+          v-for="book in useBookList.bookList"
           :key="book.id"
           class="card bg-base-100"
           :class="{ 'outline outline-success': book.vote }"
@@ -83,27 +83,25 @@
 <script setup>
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { supabase, userSession, profile } from '../lib/supabase';
-import { fetchBooks } from '../utils/fetchBooks';
 import { formatDateYear } from '../utils/formatDateYear';
 import _debounce from 'lodash/debounce';
 import { useAlert } from '../stores/useAlert';
+import { useBookList } from '../stores/useBookList';
 
-const bookList = ref(null);
 const voteCount = ref(0);
 const voteLimit = 3;
 let channel;
 
 onMounted(async () => {
-  await updateBookList();
   await updateUserVotes();
-  await refreshVoteCounts();
+  await useBookList.updateVoteCounts();
 
   channel = supabase
     .channel('votes-all-channel')
     .on(
       'postgres_changes',
       { event: '*', schema: 'public', table: 'votes' },
-      refreshVoteCounts
+      useBookList.updateVoteCounts
     )
     .on(
       'postgres_changes',
@@ -128,30 +126,7 @@ async function updateUserVotes() {
     .select('*')
     .eq('profile_id', profile.value.id);
   voteCount.value = votes.length;
-  votes.map((vote) => {
-    bookList.value.find((book) => book.id === vote.book_id).vote = true;
-  });
-  const voteBookIds = votes.map((vote) => vote.book_id);
-  bookList.value
-    .filter((book) => !voteBookIds.includes(book.id))
-    .map((book) => (book.vote = false));
-}
-
-async function refreshVoteCounts() {
-  const { data: voteCounts, error } = await supabase.rpc(
-    'count_votes_group_by_book_id'
-  );
-
-  bookList.value.forEach((book) => {
-    let matchingVoteCount = voteCounts.find(
-      (voteCount) => voteCount.book_id === book.id
-    );
-    if (matchingVoteCount) {
-      book.voteCount = matchingVoteCount.vote_count;
-    } else {
-      book.voteCount = 0;
-    }
-  });
+  useBookList.updateUserVotes(votes);
 }
 
 function insertVote(book) {
@@ -188,10 +163,5 @@ async function handleVote(book) {
     book.vote = !book.vote;
   }
   book.loading = false;
-}
-
-async function updateBookList() {
-  const { data } = await fetchBooks();
-  bookList.value = data;
 }
 </script>
