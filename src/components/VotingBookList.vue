@@ -101,7 +101,9 @@ onMounted(async () => {
     .on(
       'postgres_changes',
       { event: '*', schema: 'public', table: 'votes' },
-      useBookList.updateVoteCounts
+      () => {
+        useBookList.updateVoteCounts();
+      }
     )
     .on(
       'postgres_changes',

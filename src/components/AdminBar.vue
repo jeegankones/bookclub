@@ -18,6 +18,7 @@
           >
             Start voting
           </button>
+          <button class="btn btn-sm mr-2">Pick a winner</button>
         </div>
       </div>
     </div>

@@ -81,12 +81,16 @@ onMounted(async () => {
     .on(
       'postgres_changes',
       { event: 'INSERT', schema: 'public', table: 'books' },
-      useBookList.updateBookList
+      () => {
+        useBookList.updateBookList();
+      }
     )
     .on(
       'postgres_changes',
       { event: 'UPDATE', schema: 'public', table: 'books' },
-      useBookList.updateBookList
+      () => {
+        useBookList.updateBookList();
+      }
     )
     .subscribe();
 });
