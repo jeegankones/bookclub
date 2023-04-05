@@ -18,7 +18,9 @@
           >
             Start voting
           </button>
-          <button class="btn btn-sm mr-2">Pick a winner</button>
+          <button class="btn btn-sm mr-2" @click="pickWinner()">
+            Pick a winner
+          </button>
         </div>
       </div>
     </div>
@@ -26,8 +28,9 @@
 </template>
 
 <script setup>
-import { ref, defineProps, onMounted } from 'vue';
+import { ref, defineProps, onMounted, toRaw } from 'vue';
 import { supabase } from '../lib/supabase';
+import { useBookList } from '../stores/useBookList';
 
 const voting = ref(null);
 const props = defineProps(['voting']);
@@ -35,6 +38,21 @@ const props = defineProps(['voting']);
 onMounted(() => {
   voting.value = props.voting;
 });
+
+async function pickWinner() {
+  const picks = [];
+  const bookList = toRaw(useBookList.bookList);
+  bookList.forEach((book) => {
+    if (book.voteCount) {
+      for (let i = 0; i < book.voteCount; i++) {
+        picks.push(book);
+      }
+    }
+  });
+  const pick = picks[Math.floor(Math.random() * picks.length)];
+  await supabase.from('books').update({ archived: true }).eq('id', pick.id);
+  await supabase.from('winning_books').insert({ book_id: pick.id });
+}
 
 async function setVoting(value) {
   const { data, error } = await supabase

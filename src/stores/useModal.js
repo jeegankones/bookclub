@@ -5,6 +5,9 @@ export const useModal = reactive({
   view: {},
   actions: [],
   open(view, actions = []) {
+    if (this.isOpen) {
+      this.close();
+    }
     this.isOpen = true;
     this.actions = actions;
     this.view = markRaw(view);

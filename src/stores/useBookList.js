@@ -1,6 +1,6 @@
 import { reactive } from 'vue';
 import { fetchBooks } from '../utils/fetchBooks';
-import { supabase, profile } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 
 export const useBookList = reactive({
   bookList: [],

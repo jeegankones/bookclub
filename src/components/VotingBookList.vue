@@ -126,6 +126,7 @@ async function updateUserVotes() {
   const { data: votes } = await supabase
     .from('votes')
     .select('*')
+    .eq('archived', false)
     .eq('profile_id', profile.value.id);
   voteCount.value = votes.length;
   useBookList.updateUserVotes(votes);
@@ -141,6 +142,7 @@ function deleteVote(book) {
   return supabase
     .from('votes')
     .delete()
+    .eq('archived', false)
     .eq('book_id', book.id)
     .eq('profile_id', profile.value.id);
 }
