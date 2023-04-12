@@ -41,7 +41,7 @@ onBeforeMount(async () => {
     .from('settings')
     .select('value')
     .eq('setting', 'voting');
-  voting.value = data[0].value;
+  voting.value = data[0]?.value;
   loading.value = false;
 });
 
