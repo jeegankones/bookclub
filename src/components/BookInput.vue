@@ -127,18 +127,18 @@ const submitBook = async (book) => {
 };
 
 const searchBooks = _debounce(async (query) => {
-  const response = await axios.get(
-    `https://www.googleapis.com/books/v1/volumes?q=${query}`
-  );
-  results.value = response.data.items.slice(0, 3);
+  if (query) {
+    const response = await axios.get(
+      `https://www.googleapis.com/books/v1/volumes?q=${query}`
+    );
+    results.value = response.data.items.slice(0, 3);
+  } else {
+    results.value = null;
+  }
 }, 500);
 
 const handleInput = (input) => {
   const query = input.trim().split(' ').join('+');
-  if (query) {
-    searchBooks(query);
-  } else {
-    results.value = null;
-  }
+  searchBooks(query);
 };
 </script>
