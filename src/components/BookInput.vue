@@ -91,7 +91,7 @@ const isButtonDisabled = (book) => {
   return (
     book.loading ||
     submittedBookIds.value.includes(book.id) ||
-    useBookList.currentlyReading.google_id === book.id
+    useBookList?.currentlyReading?.google_id === book.id
   );
 };
 
