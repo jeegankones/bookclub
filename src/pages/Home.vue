@@ -8,9 +8,13 @@
     :voting="voting"
   />
   <div v-if="!loading" class="container mx-auto px-2">
+    <CurrentlyReading
+      v-if="!voting && useBookList.currentlyReading"
+      class="mt-5"
+    />
     <BookInput v-if="!voting && userSession" class="mt-5" />
     <VotingBookList v-if="voting && userSession" class="mt-5" />
-    <BookList v-else class="mt-5" />
+    <BookList v-else class="my-5" />
   </div>
 </template>
 
@@ -27,6 +31,8 @@ import Modal from '../components/Modal.vue';
 import VotingStartModal from '../components/VoteStartModal.vue';
 import { useModal } from '../stores/useModal';
 import { useBookList } from '../stores/useBookList';
+import WinningBookModal from '../components/WinningBookModal.vue';
+import CurrentlyReading from '../components/CurrentlyReading.vue';
 
 const voting = ref(null);
 const loading = ref(null);
@@ -34,7 +40,7 @@ let channel;
 
 onBeforeMount(async () => {
   loading.value = true;
-  userSession.value = (await supabase.auth.getSession()).data.session;
+  userSession.value = (await supabase.auth.getSession()).data?.session;
   await setProfile();
 
   const { data, error } = await supabase
@@ -47,9 +53,10 @@ onBeforeMount(async () => {
 
 onMounted(async () => {
   await useBookList.updateBookList();
+  await useBookList.updateCurrentlyReading();
 
   channel = supabase
-    .channel('home-settings-change-channel')
+    .channel('home-channel')
     .on(
       'postgres_changes',
       { event: 'UPDATE', schema: 'public', table: 'settings' },
@@ -57,10 +64,31 @@ onMounted(async () => {
         if (payload.new.setting === 'voting') {
           voting.value = payload.new.value;
           if (voting.value) {
-            console.log(VotingStartModal);
             useModal.open(VotingStartModal);
           }
         }
+      }
+    )
+    .on(
+      'postgres_changes',
+      { event: 'INSERT', schema: 'public', table: 'winning_books' },
+      async () => {
+        await useBookList.updateCurrentlyReading();
+        useModal.open(WinningBookModal);
+      }
+    )
+    .on(
+      'postgres_changes',
+      { event: 'INSERT', schema: 'public', table: 'books' },
+      () => {
+        useBookList.updateBookList();
+      }
+    )
+    .on(
+      'postgres_changes',
+      { event: 'UPDATE', schema: 'public', table: 'books' },
+      () => {
+        useBookList.updateBookList();
       }
     )
     .subscribe();

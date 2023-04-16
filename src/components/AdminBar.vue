@@ -6,20 +6,13 @@
         <div>
           <button
             v-if="voting"
-            class="btn btn-sm btn-error mr-2"
-            @click="setVoting(false)"
+            class="btn btn-error mr-2"
+            @click="confirmPickWinner()"
           >
-            End voting
-          </button>
-          <button
-            v-else
-            class="btn btn-sm btn-success mr-2"
-            @click="setVoting(true)"
-          >
-            Start voting
-          </button>
-          <button class="btn btn-sm mr-2" @click="pickWinner()">
             Pick a winner
+          </button>
+          <button v-else class="btn btn-success mr-2" @click="setVoting(true)">
+            Start voting
           </button>
         </div>
       </div>
@@ -31,6 +24,8 @@
 import { ref, defineProps, onMounted, toRaw } from 'vue';
 import { supabase } from '../lib/supabase';
 import { useBookList } from '../stores/useBookList';
+import { useModal } from '../stores/useModal';
+import ConfirmPickWinnerModal from './ConfirmPickWinnerModal.vue';
 
 const voting = ref(null);
 const props = defineProps(['voting']);
@@ -38,6 +33,23 @@ const props = defineProps(['voting']);
 onMounted(() => {
   voting.value = props.voting;
 });
+
+function confirmPickWinner() {
+  useModal.open(ConfirmPickWinnerModal, [
+    {
+      label: 'No',
+      callback() {
+        useModal.close();
+      },
+    },
+    {
+      label: 'Yes',
+      async callback() {
+        await pickWinner();
+      },
+    },
+  ]);
+}
 
 async function pickWinner() {
   const picks = [];
@@ -50,7 +62,10 @@ async function pickWinner() {
     }
   });
   const pick = picks[Math.floor(Math.random() * picks.length)];
+  await setVoting(false);
+  useModal.close();
   await supabase.from('books').update({ archived: true }).eq('id', pick.id);
+  await supabase.from('votes').update({ archived: true }).eq('archived', false);
   await supabase.from('winning_books').insert({ book_id: pick.id });
 }
 

@@ -4,6 +4,15 @@ import { supabase } from '../lib/supabase';
 
 export const useBookList = reactive({
   bookList: [],
+  currentlyReading: null,
+  async updateCurrentlyReading() {
+    const { data } = await supabase
+      .from('winning_books')
+      .select(`books(*, profiles(full_name))`)
+      .order('created_at', { ascending: false })
+      .limit(1);
+    this.currentlyReading = data[0]?.books;
+  },
   async updateBookList() {
     const { data } = await fetchBooks();
     this.bookList = data;

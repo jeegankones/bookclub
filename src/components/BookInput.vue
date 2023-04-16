@@ -55,6 +55,7 @@ import { profile, supabase } from '../lib/supabase';
 import Spinner from './Spinner.vue';
 import { formatDateYear } from '../utils/formatDateYear';
 import _pull from 'lodash/pull';
+import { useBookList } from '../stores/useBookList';
 
 const input = ref('');
 const results = ref(null);
@@ -87,7 +88,11 @@ const syncGoogleIds = async () => {
 };
 
 const isButtonDisabled = (book) => {
-  return book.loading || submittedBookIds.value.includes(book.id);
+  return (
+    book.loading ||
+    submittedBookIds.value.includes(book.id) ||
+    useBookList.currentlyReading.google_id === book.id
+  );
 };
 
 const submitBook = async (book) => {
