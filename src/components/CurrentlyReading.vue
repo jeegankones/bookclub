@@ -1,35 +1,38 @@
 <template>
-  <div class="card bg-base-200 max-w-7xl mx-auto shadow-md shadow-base-300">
+  <div class="card bg-base-200 max-w-3xl mx-auto shadow-md shadow-base-300">
     <div class="card-body p-4">
       <h2 class="card-title mb-2">Currently reading</h2>
       <div v-if="useBookList.currentlyReading" class="card bg-base-100">
-        <div class="card-body p-4">
-          <div class="flex flex-row gap-4 items-center">
+        <div class="card-body p-4 md:p-6">
+          <div class="flex flex-row gap-4 md:gap-8 items-center">
             <div
-              v-if="useBookList.currentlyReading.small_thumbnail"
-              class="flex-none w-24 rounded overflow-hidden"
+              v-if="useBookList.currentlyReading.thumbnail"
+              class="flex-none w-24 md:w-32 rounded overflow-hidden"
             >
               <img
-                :src="useBookList.currentlyReading.small_thumbnail"
+                :src="useBookList.currentlyReading.thumbnail"
                 alt="Book cover"
               />
             </div>
             <div>
-              <h3 class="text-sm">
+              <h3 class="text-sm md:text-lg">
                 {{ useBookList.currentlyReading.title }}
               </h3>
               <p
                 v-if="useBookList.currentlyReading.author"
-                class="text-sm text-gray-400"
+                class="text-sm md:text-lg text-gray-400"
               >
                 {{ useBookList.currentlyReading.author }}
               </p>
-              <p class="text-sm text-gray-400">
+              <p class="text-sm md:text-lg text-gray-400">
                 {{
                   formatDateYear(useBookList.currentlyReading.published_date)
                 }}
               </p>
-              <p v-if="userSession" class="text-xs mt-2 text-gray-400">
+              <p
+                v-if="userSession"
+                class="text-xs md:text-sm mt-2 text-gray-400"
+              >
                 Submitted by
                 {{ useBookList.currentlyReading.profiles.full_name }}
               </p>

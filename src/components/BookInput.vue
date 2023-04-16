@@ -4,7 +4,7 @@
       <h2 class="card-title mb-2">Submit a book</h2>
       <input
         type="search"
-        v-model="input"
+        ref="bookInput"
         placeholder="Search"
         class="input w-full"
         @input="handleInput($event.target.value)"
@@ -57,7 +57,7 @@ import { formatDateYear } from '../utils/formatDateYear';
 import _pull from 'lodash/pull';
 import { useBookList } from '../stores/useBookList';
 
-const input = ref('');
+const bookInput = ref(null);
 const results = ref(null);
 const submittedBookIds = ref(null);
 let channel;
@@ -96,6 +96,7 @@ const isButtonDisabled = (book) => {
 };
 
 const submitBook = async (book) => {
+  bookInput.value.focus();
   const result = results.value.find((result) => result.id === book.id);
   result.loading = true;
   const { data, error } = await supabase
