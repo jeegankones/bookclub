@@ -10,5 +10,5 @@ export default defineConfig({
   build: {
     outDir: 'dist/bookclub',
   },
-  base: '/bookclub/',
+  base: '/bookclub',
 });
