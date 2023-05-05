@@ -14,12 +14,6 @@ create table "auth"."flow_state" (
 );
 
 
-alter table "auth"."users" add column "deleted_at" timestamp with time zone;
-
-alter table "auth"."users" alter column "phone" set data type text using "phone"::text;
-
-alter table "auth"."users" alter column "phone_change" set data type text using "phone_change"::text;
-
 CREATE UNIQUE INDEX flow_state_pkey ON auth.flow_state USING btree (id);
 
 CREATE INDEX idx_auth_code ON auth.flow_state USING btree (auth_code);
@@ -29,10 +23,8 @@ alter table "auth"."flow_state" add constraint "flow_state_pkey" PRIMARY KEY usi
 CREATE TRIGGER on_auth_user_created AFTER INSERT ON auth.users FOR EACH ROW EXECUTE FUNCTION handle_new_user();
 
 
-alter table "storage"."buckets" add column "allowed_mime_types" text[];
+drop function if exists "storage"."can_insert_object"(bucketid text, name text, owner uuid, metadata jsonb);
 
-alter table "storage"."buckets" add column "avif_autodetection" boolean default false;
-
-alter table "storage"."buckets" add column "file_size_limit" bigint;
+alter table "storage"."objects" drop column "version";
 
 
