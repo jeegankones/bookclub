@@ -5,14 +5,18 @@
         <h2 class="card-title mb-2">Admin</h2>
         <div>
           <button
-            v-if="voting"
+            v-if="!voting"
+            class="btn btn-success mr-2"
+            @click="setVoting(true)"
+          >
+            Start voting
+          </button>
+          <button
+            v-else
             class="btn btn-error mr-2"
             @click="confirmPickWinner()"
           >
-            Pick a winner
-          </button>
-          <button v-else class="btn btn-success mr-2" @click="setVoting(true)">
-            Start voting
+            Pick winner
           </button>
         </div>
       </div>
@@ -25,6 +29,7 @@ import { ref, defineProps, onMounted, toRaw } from 'vue';
 import { supabase } from '../lib/supabase';
 import { useBookList } from '../stores/useBookList';
 import { useModal } from '../stores/useModal';
+import { useAlert } from '../stores/useAlert';
 import ConfirmPickWinnerModal from './ConfirmPickWinnerModal.vue';
 
 const voting = ref(null);
@@ -61,10 +66,15 @@ async function pickWinner() {
       }
     }
   });
+  if (picks.length === 0) {
+    useModal.close();
+    useAlert.newAlert('Could not pick a winner');
+    return;
+  }
   const pick = picks[Math.floor(Math.random() * picks.length)];
   await setVoting(false);
   useModal.close();
-  await supabase.from('books').update({ archived: true }).eq('id', pick.id);
+  await supabase.from('books').update({ archived: true }).eq('archived', false);
   await supabase.from('votes').update({ archived: true }).eq('archived', false);
   await supabase.from('winning_books').insert({ book_id: pick.id });
 }

@@ -2,44 +2,39 @@
   <div class="card bg-base-200 max-w-3xl mx-auto shadow-md shadow-base-300">
     <div class="card-body p-4">
       <h2 class="card-title mb-2">Currently reading</h2>
-      <div v-if="useBookList.currentlyReading" class="card bg-base-100">
+      <div v-if="currentlyReading" class="card bg-base-100">
         <div class="card-body p-4 md:p-6">
           <div class="flex flex-row gap-4 md:gap-8 items-center">
             <div
-              v-if="useBookList.currentlyReading.thumbnail"
+              v-if="currentlyReading.thumbnail"
               class="flex-none w-24 md:w-32 rounded overflow-hidden"
             >
-              <img
-                :src="useBookList.currentlyReading.thumbnail"
-                alt="Book cover"
-              />
+              <img :src="currentlyReading.thumbnail" alt="Book cover" />
             </div>
             <div>
               <h3 class="text-sm md:text-lg">
-                {{ useBookList.currentlyReading.title }}
+                {{ currentlyReading.title }}
               </h3>
               <p
-                v-if="useBookList.currentlyReading.author"
+                v-if="currentlyReading.author"
                 class="text-sm md:text-lg text-gray-400"
               >
-                {{ useBookList.currentlyReading.author }}
+                {{ currentlyReading.author }}
               </p>
               <p class="text-sm md:text-lg text-gray-400">
-                {{
-                  formatDateYear(useBookList.currentlyReading.published_date)
-                }}
+                {{ formatDateYear(currentlyReading.published_date) }}
               </p>
               <p
                 v-if="userSession"
                 class="text-xs md:text-sm mt-2 text-gray-400"
               >
                 Submitted by
-                {{ useBookList.currentlyReading.profiles.full_name }}
+                {{ currentlyReading.profiles.full_name }}
               </p>
             </div>
           </div>
           <div
-            v-if="useBookList.currentlyReading.description"
+            v-if="currentlyReading.description"
             class="collapse collapse-arrow rounded-box mt-1"
           >
             <input type="checkbox" class="min-h-8" />
@@ -50,7 +45,7 @@
             </div>
             <div class="collapse-content p-0">
               <p class="text-sm text-gray-400">
-                {{ useBookList.currentlyReading.description }}
+                {{ currentlyReading.description }}
               </p>
             </div>
           </div>
@@ -64,4 +59,7 @@
 import { userSession } from '../lib/supabase';
 import { formatDateYear } from '../utils/formatDateYear';
 import { useBookList } from '../stores/useBookList';
+import { toRef } from 'vue';
+
+const currentlyReading = toRef(useBookList, 'currentlyReading');
 </script>
