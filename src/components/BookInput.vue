@@ -11,35 +11,67 @@
       />
       <ul>
         <li v-for="result in results" class="card bg-base-100 my-2">
-          <div class="card-body p-3 flex flex-row gap-3 items-center">
+          <div class="card-body p-3">
+            <div class="flex flex-row gap-3 items-center">
+              <div
+                v-if="result.volumeInfo.imageLinks"
+                class="flex-none w-12 md:w-16 rounded overflow-hidden"
+              >
+                <img
+                  :src="result.volumeInfo.imageLinks.smallThumbnail"
+                  alt="Book cover"
+                />
+              </div>
+              <div class="min-w-0">
+                <h3 class="text-sm md:text-base">
+                  {{ result.volumeInfo.title }}
+                </h3>
+                <p
+                  v-if="result.volumeInfo.authors"
+                  class="text-sm md:text-base text-gray-400"
+                >
+                  {{ result.volumeInfo.authors[0] }}
+                </p>
+                <p class="mt-1 text-xs md:text-sm text-gray-400">
+                  <span v-if="result.volumeInfo.publishedDate">{{
+                    formatDateYear(result.volumeInfo.publishedDate)
+                  }}</span>
+                  <span v-if="result.volumeInfo.pageCount"
+                    >{{
+                      result.volumeInfo.publishedDate
+                        ? `, ${result.volumeInfo.pageCount}`
+                        : result.volumeInfo.pageCount
+                    }}
+                    pages
+                  </span>
+                </p>
+                <p class="text-xs text-gray-400"></p>
+              </div>
+              <button
+                class="btn btn-sm ml-auto"
+                @click="submitBook(result)"
+                :disabled="isButtonDisabled(result)"
+              >
+                <Spinner v-if="result.loading" size="xs" />
+                <i v-else class="far fa-plus"></i>
+              </button>
+            </div>
             <div
-              v-if="result.volumeInfo.imageLinks"
-              class="flex-none w-12 md:w-16 rounded overflow-hidden"
+              v-if="result.volumeInfo.description"
+              class="collapse collapse-arrow rounded-box mt-1"
             >
-              <img
-                :src="result.volumeInfo.imageLinks.smallThumbnail"
-                alt="Book cover"
-              />
+              <input type="checkbox" class="min-h-8" />
+              <div
+                class="collapse-title min-h-8 p-0 flex items-center font-bold text-sm"
+              >
+                Description
+              </div>
+              <div class="collapse-content p-0">
+                <p class="text-sm text-gray-400">
+                  {{ result.volumeInfo.description }}
+                </p>
+              </div>
             </div>
-            <div>
-              <h3 class="text-sm">
-                {{ result.volumeInfo.title }}
-              </h3>
-              <p v-if="result.volumeInfo.authors" class="text-sm text-gray-400">
-                {{ result.volumeInfo.authors[0] }}
-              </p>
-              <p class="text-xs text-gray-400">
-                {{ formatDateYear(result.volumeInfo.publishedDate) }}
-              </p>
-            </div>
-            <button
-              class="btn btn-sm ml-auto"
-              @click="submitBook(result)"
-              :disabled="isButtonDisabled(result)"
-            >
-              <Spinner v-if="result.loading" size="xs" />
-              <i v-else class="far fa-plus"></i>
-            </button>
           </div>
         </li>
       </ul>
@@ -56,6 +88,7 @@ import Spinner from './Spinner.vue';
 import { formatDateYear } from '../utils/formatDateYear';
 import _pull from 'lodash/pull';
 import { useBookList } from '../stores/useBookList';
+import { useAlert } from '../stores/useAlert';
 
 const bookInput = ref(null);
 const results = ref(null);
@@ -106,8 +139,13 @@ const submitBook = async (book) => {
         title: book.volumeInfo.title,
         submitted_by: profile.value.id,
         google_id: book.id,
-        published_date: book.volumeInfo.publishedDate,
         archived: false,
+        ...(book.volumeInfo.publishedDate && {
+          published_date: book.volumeInfo.publishedDate,
+        }),
+        ...(book.volumeInfo.pageCount && {
+          page_count: book.volumeInfo.pageCount,
+        }),
         ...(book.volumeInfo.authors && { author: book.volumeInfo.authors[0] }),
         ...(book.volumeInfo.description && {
           description: book.volumeInfo.description,
@@ -122,8 +160,12 @@ const submitBook = async (book) => {
       { onConflict: 'google_id' }
     )
     .select('google_id');
-  submittedBookIds.value.push(data[0].google_id);
   result.loading = false;
+  if (error) {
+    useAlert.newAlert();
+    return;
+  }
+  submittedBookIds.value.push(data[0].google_id);
 };
 
 const searchBooks = _debounce(async (query) => {

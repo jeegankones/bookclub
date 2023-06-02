@@ -8,7 +8,7 @@ export const useBookList = reactive({
   async updateCurrentlyReading() {
     const { data } = await supabase
       .from('winning_books')
-      .select(`books(*, profiles(full_name))`)
+      .select(`books(*, profiles(id, full_name))`)
       .order('created_at', { ascending: false })
       .limit(1);
     this.currentlyReading = data[0]?.books;
@@ -18,13 +18,17 @@ export const useBookList = reactive({
     this.bookList = data;
   },
   async updateUserVotes(votes) {
+    this.bookList.map((book) => (book.userVoteCount = 0));
     votes.map((vote) => {
-      this.bookList.find((book) => book.id === vote.book_id).vote = true;
+      const bookWithVote = this.bookList.find(
+        (book) => book.id === vote.book_id
+      );
+      if (bookWithVote.userVoteCount) {
+        bookWithVote.userVoteCount++;
+      } else {
+        bookWithVote.userVoteCount = 1;
+      }
     });
-    const voteBookIds = votes.map((vote) => vote.book_id);
-    this.bookList
-      .filter((book) => !voteBookIds.includes(book.id))
-      .map((book) => (book.vote = false));
   },
   async updateVoteCounts() {
     const { data: voteCounts } = await supabase.rpc(

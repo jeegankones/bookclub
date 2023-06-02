@@ -3,7 +3,7 @@
     <div class="card-body p-4">
       <h2 class="card-title">Vote</h2>
       <h3 class="mb-2">
-        Choose up to {{ voteLimit }} books ({{ voteCount }}/{{ voteLimit }})
+        Vote up to {{ voteLimit }} times ({{ voteCount }}/{{ voteLimit }})
       </h3>
       <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-3">
         <div
@@ -36,28 +36,39 @@
                   {{ book.author }}
                 </p>
                 <p class="text-sm text-gray-400">
-                  {{ formatDateYear(book.published_date) }}
+                  <span v-if="book.published_date">{{
+                    formatDateYear(book.published_date)
+                  }}</span>
+                  <span v-if="book.page_count"
+                    >{{
+                      book.published_date
+                        ? `, ${book.page_count}`
+                        : book.page_count
+                    }}
+                    pages
+                  </span>
                 </p>
                 <p v-if="userSession" class="text-xs mt-4 text-gray-400">
                   Submitted by {{ book.profiles.full_name }}
                 </p>
               </div>
-              <button
-                v-if="book.vote"
-                class="btn btn-sm w-10 ml-auto"
-                @click="handleVote(book)"
-                :disabled="book.loading"
-              >
-                <i class="fas fa-xmark"></i>
-              </button>
-              <button
-                v-else
-                class="btn btn-sm w-10 ml-auto"
-                @click="handleVote(book)"
-                :disabled="book.loading || voteCount >= voteLimit"
-              >
-                <i class="fas fa-check"></i>
-              </button>
+              <div v-if="canVote(book)" class="flex flex-col text-center">
+                <button
+                  class="btn btn-sm w-10 ml-auto"
+                  @click="handleAddVote(book)"
+                  :disabled="voteCount >= voteLimit"
+                >
+                  <i class="fas fa-plus"></i>
+                </button>
+                <p class="my-1">{{ book.userVoteCount }}</p>
+                <button
+                  class="btn btn-sm w-10 ml-auto"
+                  @click="handleRemoveVote(book)"
+                  :disabled="book.userVoteCount === 0"
+                >
+                  <i class="fas fa-minus"></i>
+                </button>
+              </div>
             </div>
             <div
               v-if="book.description"
@@ -93,7 +104,7 @@ const voteLimit = 3;
 let channel;
 
 onMounted(async () => {
-  await updateUserVotes();
+  await fetchAndUpdateUserVotes();
   await useBookList.updateVoteCounts();
 
   channel = supabase
@@ -105,16 +116,6 @@ onMounted(async () => {
         useBookList.updateVoteCounts();
       }
     )
-    .on(
-      'postgres_changes',
-      {
-        event: '*',
-        schema: 'public',
-        table: 'votes',
-        filter: `profile_id=eq.${profile.value.id}`,
-      },
-      updateUserVotes
-    )
     .subscribe();
 });
 
@@ -122,7 +123,7 @@ onBeforeUnmount(async () => {
   await supabase.removeChannel(channel);
 });
 
-async function updateUserVotes() {
+async function fetchAndUpdateUserVotes() {
   const { data: votes } = await supabase
     .from('votes')
     .select('*')
@@ -130,6 +131,12 @@ async function updateUserVotes() {
     .eq('profile_id', profile.value.id);
   voteCount.value = votes.length;
   useBookList.updateUserVotes(votes);
+}
+
+function canVote(book) {
+  return (
+    profile?.value.role === 'admin' || book.profiles.id !== book.submitted_by
+  );
 }
 
 function insertVote(book) {
@@ -142,30 +149,30 @@ function deleteVote(book) {
   return supabase
     .from('votes')
     .delete()
-    .eq('archived', false)
-    .eq('book_id', book.id)
-    .eq('profile_id', profile.value.id);
+    .match({ archived: false, book_id: book.id, profile_id: profile.value.id })
+    .order('created_at')
+    .limit(1);
 }
 
-async function handleVote(book) {
-  book.vote = !book.vote;
-  book.loading = true;
-  let error;
-  if (book.vote) {
-    ({ error } = await insertVote(book));
-    if (!error) {
-      voteCount.value++;
-    }
-  } else {
-    ({ error } = await deleteVote(book));
-    if (!error) {
-      voteCount.value--;
-    }
-  }
+async function handleAddVote(book) {
+  book.userVoteCount++;
+  voteCount.value++;
+  const { error } = await insertVote(book);
   if (error) {
+    book.userVoteCount--;
+    voteCount.value--;
     useAlert.newAlert();
-    book.vote = !book.vote;
   }
-  book.loading = false;
+}
+
+async function handleRemoveVote(book) {
+  book.userVoteCount--;
+  voteCount.value--;
+  const { error } = await deleteVote(book);
+  if (error) {
+    book.userVoteCount++;
+    voteCount.value++;
+    useAlert.newAlert();
+  }
 }
 </script>
