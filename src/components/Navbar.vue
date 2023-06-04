@@ -1,5 +1,5 @@
 <template>
-  <div class="navbar bg-base-200 shadow-md shadow-base-300">
+  <div class="navbar bg-base-300 shadow-md shadow-base-300">
     <div class="px-4 py-2 flex justify-between container mx-auto">
       <h1 class="my-2 font-bold">Book club</h1>
       <div v-if="userSession">
@@ -13,7 +13,7 @@
           </label>
           <div
             tabindex="0"
-            class="dropdown-content shadow bg-base-100 rounded-box"
+            class="dropdown-content shadow bg-base-200 rounded-box"
           >
             <button class="btn w-40" @click="signout">Sign out</button>
           </div>

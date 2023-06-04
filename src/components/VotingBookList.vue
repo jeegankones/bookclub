@@ -1,5 +1,5 @@
 <template>
-  <div class="card max-w-7xl mx-auto shadow-md shadow-base-300 bg-base-200">
+  <div class="card max-w-7xl mx-auto shadow-md shadow-base-300 bg-base-300">
     <div class="card-body p-4">
       <h2 class="card-title">Vote</h2>
       <h3 class="mb-2">
@@ -9,7 +9,7 @@
         <div
           v-for="book in useBookList.bookList"
           :key="book.id"
-          class="card bg-base-100"
+          class="card bg-base-200"
           :class="{ 'outline outline-success': book.vote }"
         >
           <Transition name="bounce">

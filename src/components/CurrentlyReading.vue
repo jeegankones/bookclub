@@ -1,8 +1,8 @@
 <template>
-  <div class="card bg-base-200 max-w-3xl mx-auto shadow-md shadow-base-300">
+  <div class="card bg-base-300 max-w-3xl mx-auto shadow-md shadow-base-300">
     <div class="card-body p-4">
       <h2 class="card-title mb-2">Currently reading</h2>
-      <div v-if="currentlyReading" class="card bg-base-100">
+      <div v-if="currentlyReading" class="card bg-base-200">
         <div class="card-body p-4 md:p-6">
           <div class="flex flex-row gap-4 md:gap-8 items-center">
             <div

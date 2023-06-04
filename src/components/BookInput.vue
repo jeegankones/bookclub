@@ -1,5 +1,5 @@
 <template>
-  <div class="card max-w-2xl mx-auto shadow-md shadow-base-300 bg-base-200">
+  <div class="card max-w-2xl mx-auto shadow-md shadow-base-300 bg-base-300">
     <div class="card-body p-4">
       <h2 class="card-title mb-2">Submit a book</h2>
       <input
@@ -10,7 +10,7 @@
         @input="handleInput($event.target.value)"
       />
       <ul>
-        <li v-for="result in results" class="card bg-base-100 my-2">
+        <li v-for="result in results" class="card bg-base-200 my-2">
           <div class="card-body p-3">
             <div class="flex flex-row gap-3 items-center">
               <div

@@ -1,6 +1,6 @@
 <template>
   <div class="container mx-auto px-2">
-    <div class="card bg-base-200 max-w-7xl mx-auto shadow-md shadow-base-300">
+    <div class="card bg-base-300 max-w-7xl mx-auto shadow-md shadow-base-300">
       <div class="card-body p-4">
         <h2 class="card-title mb-2">Admin</h2>
         <div>
