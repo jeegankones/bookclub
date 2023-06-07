@@ -28,7 +28,7 @@
               >
                 <img :src="book.small_thumbnail" alt="Book cover" />
               </div>
-              <div>
+              <div class="mr-auto">
                 <h3 class="text-sm">
                   {{ book.title }}
                 </h3>
@@ -135,7 +135,7 @@ async function fetchAndUpdateUserVotes() {
 
 function canVote(book) {
   return (
-    profile?.value.role === 'admin' || book.profiles.id !== book.submitted_by
+    profile?.value.role === 'admin' || profile.value.id !== book.submitted_by
   );
 }
 
