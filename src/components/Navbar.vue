@@ -1,5 +1,5 @@
 <template>
-  <div class="navbar bg-base-200 shadow-md shadow-base-300">
+  <div class="navbar shadow-xl">
     <div class="px-4 py-2 flex justify-between container mx-auto">
       <h1 class="my-2 font-bold">Book club</h1>
       <div v-if="userSession">

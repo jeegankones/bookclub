@@ -25,7 +25,7 @@
 </template>
 
 <script setup>
-import { ref, defineProps, onMounted, toRaw } from 'vue';
+import { ref, onMounted, toRaw } from 'vue';
 import { supabase } from '../lib/supabase';
 import { useBookList } from '../stores/useBookList';
 import { useModal } from '../stores/useModal';
