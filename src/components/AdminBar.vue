@@ -61,7 +61,8 @@ async function pickWinner() {
   const bookList = toRaw(useBookList.bookList);
   bookList.forEach((book) => {
     if (book.voteCount) {
-      for (let i = 0; i < book.voteCount; i++) {
+      const numberOfPicks = Math.round(Math.pow(book.voteCount, 1.5));
+      for (let i = 0; i < numberOfPicks; i++) {
         picks.push(book);
       }
     }
