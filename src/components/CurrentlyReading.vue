@@ -1,5 +1,5 @@
 <template>
-  <div class="card bg-base-200 max-w-3xl mx-auto shadow-md shadow-base-300">
+  <div class="card bg-base-200 max-w-3xl mx-auto shadow-lg">
     <div class="card-body p-4">
       <h2 class="card-title mb-2">Currently reading</h2>
       <div v-if="currentlyReading" class="card bg-base-100">

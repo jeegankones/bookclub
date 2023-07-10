@@ -1,5 +1,5 @@
 <template>
-  <div class="card max-w-2xl mx-auto shadow-md shadow-base-300 bg-base-200">
+  <div class="card max-w-2xl mx-auto shadow-lg bg-base-200">
     <div class="card-body p-4">
       <h2 class="card-title mb-2">Submit a book</h2>
       <input

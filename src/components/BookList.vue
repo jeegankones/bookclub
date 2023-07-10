@@ -1,5 +1,5 @@
 <template>
-  <div class="card max-w-7xl mx-auto shadow-md shadow-base-300 bg-base-200">
+  <div class="card max-w-7xl mx-auto shadow-lg bg-base-200">
     <div class="card-body p-4">
       <h2 class="card-title" :class="{ 'mb-2': bookListRef.length > 0 }">
         Submitted books
