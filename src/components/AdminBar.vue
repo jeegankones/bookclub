@@ -1,6 +1,6 @@
 <template>
   <div class="container mx-auto px-2">
-    <div class="card bg-base-200 max-w-7xl mx-auto shadow-md shadow-base-300">
+    <div class="card bg-base-200 max-w-7xl mx-auto shadow-lg">
       <div class="card-body p-4">
         <h2 class="card-title mb-2">Admin</h2>
         <div>
@@ -12,8 +12,15 @@
             Start voting
           </button>
           <button
-            v-else
+            v-if="voting"
             class="btn btn-error mr-2"
+            @click="setVoting(false)"
+          >
+            Cancel voting
+          </button>
+          <button
+            v-if="voting"
+            class="btn btn-primary mr-2"
             @click="confirmPickWinner()"
           >
             Pick winner
@@ -25,7 +32,7 @@
 </template>
 
 <script setup>
-import { ref, defineProps, onMounted, toRaw } from 'vue';
+import { ref, onMounted, toRaw } from 'vue';
 import { supabase } from '../lib/supabase';
 import { useBookList } from '../stores/useBookList';
 import { useModal } from '../stores/useModal';
@@ -61,7 +68,8 @@ async function pickWinner() {
   const bookList = toRaw(useBookList.bookList);
   bookList.forEach((book) => {
     if (book.voteCount) {
-      for (let i = 0; i < book.voteCount; i++) {
+      const numberOfPicks = Math.round(Math.pow(book.voteCount, 1.5));
+      for (let i = 0; i < numberOfPicks; i++) {
         picks.push(book);
       }
     }

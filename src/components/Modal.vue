@@ -1,7 +1,8 @@
 <template>
   <div
     v-show="showChild"
-    class="modal modal-open"
+    class="modal"
+    :class="{ 'modal-open': useModal.isOpen }"
     @click.self="useModal.close()"
   >
     <Transition
@@ -11,11 +12,16 @@
     >
       <div v-if="useModal.isOpen" class="modal-box relative">
         <label
-          class="btn btn-sm btn-circle absolute top-4 right-4"
+          class="btn btn-sm btn-circle absolute top-6 right-6"
           @click="useModal.close()"
           ><i class="fas fa-xmark"></i
         ></label>
-        <component :is="useModal.view"></component>
+        <component
+          v-if="useModal.model !== null"
+          :is="useModal.view"
+          v-model="useModal.model"
+        ></component>
+        <component v-else :is="useModal.view"></component>
         <div v-if="useModal.actions.length" class="modal-action">
           <button
             v-for="action in useModal.actions"

@@ -2,19 +2,21 @@
   <Modal />
   <Alert />
   <Navbar />
-  <AdminBar
-    v-if="!loading && profile?.role === 'admin'"
-    class="mt-5"
-    :voting="voting"
-  />
-  <div v-if="!loading" class="container mx-auto px-2">
-    <CurrentlyReading
-      v-if="!voting && useBookList.currentlyReading"
+  <div class="mt-28">
+    <AdminBar
+      v-if="!loading && profile?.role === 'admin'"
       class="mt-5"
+      :voting="voting"
     />
-    <BookInput v-if="!voting && userSession" class="mt-5" />
-    <VotingBookList v-if="voting && userSession" class="mt-5" />
-    <BookList v-else class="my-5" />
+    <div v-if="!loading" class="container mx-auto px-2">
+      <CurrentlyReading
+        v-if="!voting && useBookList.currentlyReading"
+        class="mt-5"
+      />
+      <BookInput v-if="!voting && userSession" class="mt-5" />
+      <VotingBookList v-if="voting && userSession" class="mt-5" />
+      <BookList v-else class="my-5" />
+    </div>
   </div>
 </template>
 
