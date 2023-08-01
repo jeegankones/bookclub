@@ -12,8 +12,15 @@
             Start voting
           </button>
           <button
-            v-else
+            v-if="voting"
             class="btn btn-error mr-2"
+            @click="setVoting(false)"
+          >
+            Cancel voting
+          </button>
+          <button
+            v-if="voting"
+            class="btn btn-primary mr-2"
             @click="confirmPickWinner()"
           >
             Pick winner
