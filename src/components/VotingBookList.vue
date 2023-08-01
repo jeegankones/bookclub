@@ -5,7 +5,7 @@
       <h3 class="mb-2">
         Vote up to {{ voteLimit }} times ({{ voteCount }}/{{ voteLimit }})
       </h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-3">
+      <div class="grid grid-cols-1 md:grid-cols-2 items-start gap-3">
         <BookCard
           v-for="book in useBookList.bookList"
           :book="book"
