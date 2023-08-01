@@ -56,12 +56,11 @@
                 <i v-else class="far fa-plus"></i>
               </button>
             </div>
-            <Collapse v-if="result.volumeInfo.description">
-              <template #title> Description </template>
-              <template #content>
-                <p>{{ result.volumeInfo.description }}</p>
-              </template>
-            </Collapse>
+            <Collapse
+              v-if="result.volumeInfo.description"
+              title="Description"
+              :content="result.volumeInfo.description"
+            />
           </div>
         </li>
       </ul>

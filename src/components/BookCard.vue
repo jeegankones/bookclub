@@ -69,12 +69,12 @@
         <p>&ldquo;{{ book.user_note }}&rdquo;</p>
         <p>&ndash;&ensp;{{ book.profiles.full_name }}</p>
       </div>
-      <Collapse v-if="book.description" :size="size">
-        <template #title>Description</template>
-        <template #content>
-          <p>{{ book.description }}</p>
-        </template>
-      </Collapse>
+      <Collapse
+        v-if="book.description"
+        title="Description"
+        :content="book.description"
+        :size="size"
+      />
     </div>
   </div>
 </template>
