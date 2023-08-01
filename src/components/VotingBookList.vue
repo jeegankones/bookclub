@@ -12,7 +12,7 @@
           :key="book.id"
           voting
         >
-          <template v-slot:buttons>
+          <template #buttons>
             <div v-if="canVote(book)" class="flex flex-col text-center ml-auto">
               <button
                 class="btn btn-sm w-10"

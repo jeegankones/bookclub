@@ -10,7 +10,7 @@
         class="grid grid-cols-1 md:grid-cols-2 items-start gap-3"
       >
         <BookCard v-for="book in bookListRef" :key="book.id" :book="book">
-          <template v-slot:buttons>
+          <template #buttons>
             <button
               v-if="
                 profile?.role === 'admin' ||
