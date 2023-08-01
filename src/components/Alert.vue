@@ -4,10 +4,8 @@
       v-if="useAlert.show"
       class="alert alert-error fixed bottom-0 z-50 shadow-lg"
     >
-      <div>
-        <i class="fa-solid fa-circle-exclamation"></i>
-        <span>{{ useAlert.message }}</span>
-      </div>
+      <i class="fa-solid fa-circle-exclamation"></i>
+      <span>{{ useAlert.message }}</span>
     </div>
   </Transition>
 </template>
