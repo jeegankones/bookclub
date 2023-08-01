@@ -11,13 +11,14 @@
       />
       <ul>
         <li v-for="result in results" class="card bg-base-100 my-2">
-          <div class="card-body p-3">
-            <div class="flex flex-row gap-3 items-center">
+          <div class="card-body p-3 md:p-4">
+            <div class="flex flex-row gap-3 md:gap-4 items-center">
               <div
                 v-if="result.volumeInfo.imageLinks"
                 class="flex-none w-12 md:w-16 rounded overflow-hidden"
               >
                 <img
+                  class="w-full"
                   :src="result.volumeInfo.imageLinks.smallThumbnail"
                   alt="Book cover"
                 />
@@ -45,33 +46,22 @@
                     pages
                   </span>
                 </p>
-                <p class="text-xs text-gray-400"></p>
               </div>
               <button
                 class="btn btn-sm ml-auto"
-                @click="submitBook(result)"
+                @click="openNoteInputModal(result)"
                 :disabled="isButtonDisabled(result)"
               >
                 <Spinner v-if="result.loading" size="xs" />
                 <i v-else class="far fa-plus"></i>
               </button>
             </div>
-            <div
-              v-if="result.volumeInfo.description"
-              class="collapse collapse-arrow rounded-box mt-1"
-            >
-              <input type="checkbox" class="min-h-8" />
-              <div
-                class="collapse-title min-h-8 p-0 flex items-center font-bold text-sm"
-              >
-                Description
-              </div>
-              <div class="collapse-content p-0">
-                <p class="text-sm text-gray-400">
-                  {{ result.volumeInfo.description }}
-                </p>
-              </div>
-            </div>
+            <Collapse v-if="result.volumeInfo.description">
+              <template #title> Description </template>
+              <template #content>
+                <p>{{ result.volumeInfo.description }}</p>
+              </template>
+            </Collapse>
           </div>
         </li>
       </ul>
@@ -89,6 +79,9 @@ import { formatDateYear } from '../utils/formatDateYear';
 import _pull from 'lodash/pull';
 import { useBookList } from '../stores/useBookList';
 import { useAlert } from '../stores/useAlert';
+import { useModal } from '../stores/useModal';
+import NoteInputModal from './NoteInputModal.vue';
+import Collapse from './Collapse.vue';
 
 const bookInput = ref(null);
 const results = ref(null);
@@ -128,6 +121,28 @@ const isButtonDisabled = (book) => {
   );
 };
 
+function openNoteInputModal(book) {
+  useModal.open(
+    NoteInputModal,
+    [
+      {
+        label: 'Cancel',
+        callback() {
+          useModal.close();
+        },
+      },
+      {
+        label: 'Submit',
+        callback() {
+          submitBook(useModal.model);
+          useModal.close();
+        },
+      },
+    ],
+    book
+  );
+}
+
 const submitBook = async (book) => {
   bookInput.value.focus();
   const result = results.value.find((result) => result.id === book.id);
@@ -140,6 +155,7 @@ const submitBook = async (book) => {
         submitted_by: profile.value.id,
         google_id: book.id,
         archived: false,
+        user_note: book.userNote ? book.userNote.trim() : null,
         ...(book.volumeInfo.publishedDate && {
           published_date: book.volumeInfo.publishedDate,
         }),
