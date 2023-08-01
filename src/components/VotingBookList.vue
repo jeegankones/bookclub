@@ -81,7 +81,7 @@ async function fetchAndUpdateUserVotes() {
 
 function canVote(book) {
   return (
-    profile?.value.role === 'admin' || book.profiles.id !== book.submitted_by
+    profile?.value.role === 'admin' || profile.value.id !== book.submitted_by
   );
 }
 
