@@ -1,3 +1,15 @@
 {
-  "recommendations": ["Vue.volar", "Vue.vscode-typescript-vue-plugin"]
+  "recommendations": [
+    "vue.vscode-typescript-vue-plugin",
+    "formulahendry.auto-close-tag",
+    "formulahendry.auto-complete-tag",
+    "formulahendry.auto-rename-tag",
+    "mikestead.dotenv",
+    "dbaeumer.vscode-eslint",
+    "tamasfe.even-better-toml",
+    "eamodio.gitlens",
+    "yzhang.markdown-all-in-one",
+    "esbenp.prettier-vscode",
+    "bradlc.vscode-tailwindcss"
+  ]
 }
