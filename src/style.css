@@ -3,43 +3,43 @@
 @tailwind utilities;
 
 @layer base {
-  h1 {
-    @apply text-3xl;
-  }
-  h2 {
-    @apply text-xl;
-  }
-
-  @screen md {
     h1 {
-      @apply text-4xl;
+        @apply text-3xl;
     }
     h2 {
-      @apply text-2xl;
+        @apply text-xl;
     }
-  }
+
+    @screen md {
+        h1 {
+            @apply text-4xl;
+        }
+        h2 {
+            @apply text-2xl;
+        }
+    }
 }
 
 @layer components {
-  .collapse-arrow .collapse-title:after {
-    right: 0.25rem;
-  }
+    .collapse-arrow .collapse-title:after {
+        right: 0.25rem;
+    }
 }
 
 .bounce-enter-active {
-  animation: bounce-in 0.4s;
+    animation: bounce-in 0.4s;
 }
 .bounce-leave-active {
-  animation: bounce-in 0.2s reverse;
+    animation: bounce-in 0.2s reverse;
 }
 @keyframes bounce-in {
-  0% {
-    transform: scale(0);
-  }
-  50% {
-    transform: scale(1.125);
-  }
-  100% {
-    transform: scale(1);
-  }
+    0% {
+        transform: scale(0);
+    }
+    50% {
+        transform: scale(1.125);
+    }
+    100% {
+        transform: scale(1);
+    }
 }
