@@ -1,5 +1,5 @@
 <template>
-    <Modal />
+    <Modal v-if="userSession" />
     <Alert />
     <Navbar />
     <div class="mt-28">
@@ -33,7 +33,7 @@
 </template>
 
 <script setup>
-import { onBeforeMount, onBeforeUnmount, onMounted, ref } from 'vue';
+import { onBeforeMount, onBeforeUnmount, onMounted, ref, toRaw } from 'vue';
 
 import AdminBar from '../components/AdminBar.vue';
 import Alert from '../components/Alert.vue';
@@ -85,8 +85,11 @@ onMounted(async () => {
             'postgres_changes',
             { event: 'INSERT', schema: 'public', table: 'winning_books' },
             async () => {
+                const bookList = toRaw(useBookList.bookList);
                 await useBookList.updateCurrentlyReading();
-                useModal.open(WinningBookModal);
+                useModal.open(WinningBookModal, undefined, bookList);
+                await supabase.from('books').update({ archived: true }).eq('archived', false);
+                await supabase.from('votes').update({ archived: true }).eq('archived', false);
             },
         )
         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'books' }, () => {

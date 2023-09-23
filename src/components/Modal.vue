@@ -7,12 +7,14 @@
     >
         <Transition
             name="bounce"
-            @before-enter="showChild = true"
-            @after-leave="showChild = false"
+            mode="out-in"
+            @enter="showChild = true"
+            @after-enter="afterEnter()"
+            @after-leave="afterLeave()"
         >
             <div
                 v-if="useModal.isOpen"
-                class="modal-box relative"
+                class="modal-box relative max-w-2xl"
             >
                 <label
                     class="btn btn-circle btn-sm absolute right-6 top-6"
@@ -21,12 +23,12 @@
                 ></label>
                 <component
                     :is="useModal.view"
-                    v-if="useModal.model !== null"
+                    v-if="useModal.model"
                     v-model="useModal.model"
                 ></component>
                 <component
                     :is="useModal.view"
-                    v-else
+                    v-if="!useModal.model"
                 ></component>
                 <div
                     v-if="useModal.actions.length"
@@ -52,4 +54,13 @@ import { ref } from 'vue';
 import { useModal } from '../stores/useModal';
 
 const showChild = ref(false);
+
+function afterEnter() {
+    useModal.afterEnter = true;
+}
+
+function afterLeave() {
+    showChild.value = false;
+    useModal.afterEnter = false;
+}
 </script>
