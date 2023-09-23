@@ -53,6 +53,7 @@ function confirmPickWinner() {
         {
             label: 'Yes',
             async callback() {
+                useModal.close();
                 await pickWinner();
             },
         },
@@ -71,15 +72,11 @@ async function pickWinner() {
         }
     });
     if (picks.length === 0) {
-        useModal.close();
         useAlert.newAlert('Could not pick a winner');
         return;
     }
     const pick = picks[Math.floor(Math.random() * picks.length)];
     await setVoting(false);
-    useModal.close();
-    await supabase.from('books').update({ archived: true }).eq('archived', false);
-    await supabase.from('votes').update({ archived: true }).eq('archived', false);
     await supabase.from('winning_books').insert({ book_id: pick.id });
 }
 
