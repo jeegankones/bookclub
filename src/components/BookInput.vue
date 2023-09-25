@@ -79,10 +79,10 @@
 </template>
 
 <script setup>
-import axios from 'axios';
 import _debounce from 'lodash/debounce';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 
+import { getBooks } from '../api/googleBooks';
 import { profile, supabase } from '../lib/supabase';
 import { useAlert } from '../stores/useAlert';
 import { useBookList } from '../stores/useBookList';
@@ -194,7 +194,7 @@ const submitBook = async (book) => {
 
 const searchBooks = _debounce(async (query) => {
     if (query) {
-        const response = await axios.get(`https://www.googleapis.com/books/v1/volumes?q=${query}`);
+        const response = await getBooks(query);
         results.value = response.data.items.slice(0, 3);
     } else {
         results.value = null;
