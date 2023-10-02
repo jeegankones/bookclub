@@ -195,7 +195,7 @@ const submitBook = async (book) => {
 const searchBooks = _debounce(async (query) => {
     if (query) {
         const response = await getBooks(query);
-        results.value = response.data.items.slice(0, 3);
+        results.value = response.data.items;
     } else {
         results.value = null;
     }
