@@ -81,7 +81,7 @@
                 class="mt-2 text-sm italic text-gray-400"
                 :class="{ 'md:text-lg': size === 'lg' }"
             >
-                <p>&ldquo;{{ book.user_note }}&rdquo;</p>
+                <p class="break-words">&ldquo;{{ book.user_note }}&rdquo;</p>
                 <p>&ndash;&ensp;{{ book.profiles.full_name }}</p>
             </div>
             <Collapse

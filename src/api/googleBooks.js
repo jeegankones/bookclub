@@ -9,6 +9,7 @@ function getBooks(query) {
             ...(import.meta.env.VITE_APP_GOOGLE_BOOKS_API_KEY && {
                 key: import.meta.env.VITE_APP_GOOGLE_BOOKS_API_KEY,
             }),
+            maxResults: 3,
         },
     });
 }
