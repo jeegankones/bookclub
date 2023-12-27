@@ -1,41 +1,39 @@
 <template>
-    <div class="card mx-auto max-w-7xl bg-base-200 shadow-lg">
-        <div class="card-body p-4">
-            <h2 class="card-title">Vote</h2>
-            <h3 class="mb-2">Vote up to {{ voteLimit }} times ({{ voteCount }}/{{ voteLimit }})</h3>
-            <div class="grid grid-cols-1 items-start gap-3 md:grid-cols-2">
-                <BookCard
-                    v-for="book in useBookList.bookList"
-                    :key="book.id"
-                    :book="book"
-                    voting
-                >
-                    <template #buttons>
-                        <div
-                            v-if="canVote(book)"
-                            class="ml-auto flex flex-col text-center"
+    <Card>
+        <template #title>Vote</template>
+        <h3 class="mb-2">Vote up to {{ voteLimit }} times ({{ voteCount }}/{{ voteLimit }})</h3>
+        <div class="grid grid-cols-1 items-start gap-3 md:grid-cols-2">
+            <BookCard
+                v-for="book in useBookList.bookList"
+                :key="book.id"
+                :book="book"
+                voting
+            >
+                <template #buttons>
+                    <div
+                        v-if="canVote(book)"
+                        class="ml-auto flex flex-col text-center"
+                    >
+                        <button
+                            class="btn btn-sm w-10"
+                            :disabled="voteCount >= voteLimit"
+                            @click="handleAddVote(book)"
                         >
-                            <button
-                                class="btn btn-sm w-10"
-                                :disabled="voteCount >= voteLimit"
-                                @click="handleAddVote(book)"
-                            >
-                                <i class="fas fa-plus"></i>
-                            </button>
-                            <p class="my-1">{{ book.userVoteCount }}</p>
-                            <button
-                                class="btn btn-sm w-10"
-                                :disabled="book.userVoteCount === 0"
-                                @click="handleRemoveVote(book)"
-                            >
-                                <i class="fas fa-minus"></i>
-                            </button>
-                        </div>
-                    </template>
-                </BookCard>
-            </div>
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <p class="my-1">{{ book.userVoteCount }}</p>
+                        <button
+                            class="btn btn-sm w-10"
+                            :disabled="book.userVoteCount === 0"
+                            @click="handleRemoveVote(book)"
+                        >
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                </template>
+            </BookCard>
         </div>
-    </div>
+    </Card>
 </template>
 
 <script setup>
@@ -45,6 +43,7 @@ import { profile, supabase } from '../lib/supabase';
 import { useAlert } from '../stores/useAlert';
 import { useBookList } from '../stores/useBookList';
 import BookCard from './BookCard.vue';
+import Card from './Card.vue';
 
 const voteCount = ref(0);
 const voteLimit = 3;

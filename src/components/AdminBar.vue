@@ -1,33 +1,31 @@
 <template>
     <div class="container mx-auto px-2">
-        <div class="card mx-auto max-w-7xl bg-base-200 shadow-lg">
-            <div class="card-body p-4">
-                <h2 class="card-title mb-2">Admin</h2>
-                <div>
-                    <button
-                        v-if="!voting"
-                        class="btn btn-success mr-2"
-                        @click="setVoting(true)"
-                    >
-                        Start voting
-                    </button>
-                    <button
-                        v-if="voting"
-                        class="btn btn-error mr-2"
-                        @click="setVoting(false)"
-                    >
-                        Cancel voting
-                    </button>
-                    <button
-                        v-if="voting"
-                        class="btn btn-primary mr-2"
-                        @click="confirmPickWinner()"
-                    >
-                        Pick winner
-                    </button>
-                </div>
+        <Card>
+            <template #title>Admin</template>
+            <div>
+                <button
+                    v-if="!voting"
+                    class="btn btn-success mr-2"
+                    @click="setVoting(true)"
+                >
+                    Start voting
+                </button>
+                <button
+                    v-if="voting"
+                    class="btn btn-error mr-2"
+                    @click="setVoting(false)"
+                >
+                    Cancel voting
+                </button>
+                <button
+                    v-if="voting"
+                    class="btn btn-primary mr-2"
+                    @click="confirmPickWinner()"
+                >
+                    Pick winner
+                </button>
             </div>
-        </div>
+        </Card>
     </div>
 </template>
 
@@ -38,6 +36,7 @@ import { supabase } from '../lib/supabase';
 import { useAlert } from '../stores/useAlert';
 import { useBookList } from '../stores/useBookList';
 import { useModal } from '../stores/useModal';
+import Card from './Card.vue';
 import ConfirmPickWinnerModal from './ConfirmPickWinnerModal.vue';
 
 defineProps({ voting: Boolean });
