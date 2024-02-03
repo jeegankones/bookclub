@@ -31,11 +31,13 @@
 </template>
 
 <script setup>
-import { ref, toRef } from 'vue';
+import { computed, ref } from 'vue';
 
-import { useBookList } from '../stores/useBookList';
+import { useBooksStore } from '../stores/useBooksStore';
 import Spinner from './Spinner.vue';
 import WinnerWheel from './WinnerWheel.vue';
+
+const booksStore = useBooksStore();
 
 // Props
 defineProps({
@@ -43,6 +45,6 @@ defineProps({
 });
 
 // Data
-const currentlyReading = toRef(useBookList, 'currentlyReading');
+const currentlyReading = computed(() => booksStore.currentlyReading);
 const showWheel = ref(true);
 </script>

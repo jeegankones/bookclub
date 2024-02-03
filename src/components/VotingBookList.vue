@@ -5,7 +5,7 @@
             <h3 class="mb-2">Vote up to {{ voteLimit }} times ({{ voteCount }}/{{ voteLimit }})</h3>
             <div class="grid grid-cols-1 items-start gap-3 md:grid-cols-2">
                 <BookCard
-                    v-for="book in useBookList.bookList"
+                    v-for="book in booksStore.books"
                     :key="book.id"
                     :book="book"
                     voting
@@ -43,7 +43,7 @@ import { onBeforeUnmount, onMounted, ref } from 'vue';
 
 import { profile, supabase } from '../lib/supabase';
 import { useAlertStore } from '../stores/useAlertStore';
-import { useBookList } from '../stores/useBookList';
+import { useBooksStore } from '../stores/useBooksStore';
 import BookCard from './BookCard.vue';
 
 const voteCount = ref(0);
@@ -51,15 +51,16 @@ const voteLimit = 3;
 let channel;
 
 const alertStore = useAlertStore();
+const booksStore = useBooksStore();
 
 onMounted(async () => {
     await fetchAndUpdateUserVotes();
-    await useBookList.updateVoteCounts();
+    await booksStore.updateVoteCounts();
 
     channel = supabase
         .channel('votes-all-channel')
         .on('postgres_changes', { event: '*', schema: 'public', table: 'votes' }, () => {
-            useBookList.updateVoteCounts();
+            booksStore.updateVoteCounts();
         })
         .subscribe();
 });
@@ -75,7 +76,7 @@ async function fetchAndUpdateUserVotes() {
         .eq('archived', false)
         .eq('profile_id', profile.value.id);
     voteCount.value = votes.length;
-    useBookList.updateUserVotes(votes);
+    booksStore.updateUserVotes(votes);
 }
 
 function canVote(book) {

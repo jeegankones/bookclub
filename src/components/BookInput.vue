@@ -85,7 +85,7 @@ import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { getBooks } from '../api/googleBooks';
 import { profile, supabase } from '../lib/supabase';
 import { useAlertStore } from '../stores/useAlertStore';
-import { useBookList } from '../stores/useBookList';
+import { useBooksStore } from '../stores/useBooksStore';
 import { useModalStore } from '../stores/useModalStore';
 import { formatDateYear } from '../utils/formatDateYear';
 import Collapse from './Collapse.vue';
@@ -99,6 +99,7 @@ let channel;
 
 const modalStore = useModalStore();
 const alertStore = useAlertStore();
+const booksStore = useBooksStore();
 
 onMounted(async () => {
     await syncGoogleIds();
@@ -126,7 +127,7 @@ const isButtonDisabled = (book) => {
     return (
         book.loading ||
         submittedBookIds.value.includes(book.id) ||
-        useBookList?.currentlyReading?.google_id === book.id
+        booksStore?.currentlyReading?.google_id === book.id
     );
 };
 

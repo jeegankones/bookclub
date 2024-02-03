@@ -13,7 +13,7 @@
             class="container mx-auto px-2"
         >
             <CurrentlyReading
-                v-if="!voting && useBookList.currentlyReading"
+                v-if="!voting && booksStore.currentlyReading"
                 class="mt-5"
             />
             <BookInput
@@ -46,7 +46,7 @@ import VotingStartModal from '../components/VoteStartModal.vue';
 import VotingBookList from '../components/VotingBookList.vue';
 import WinningBookModal from '../components/WinningBookModal.vue';
 import { profile, setProfile, supabase, userSession } from '../lib/supabase';
-import { useBookList } from '../stores/useBookList';
+import { useBooksStore } from '../stores/useBooksStore';
 import { useModalStore } from '../stores/useModalStore';
 
 const voting = ref(null);
@@ -54,6 +54,7 @@ const loading = ref(null);
 let channel;
 
 const modalStore = useModalStore();
+const booksStore = useBooksStore();
 
 onBeforeMount(async () => {
     loading.value = true;
@@ -66,8 +67,8 @@ onBeforeMount(async () => {
 });
 
 onMounted(async () => {
-    await useBookList.updateBookList();
-    await useBookList.updateCurrentlyReading();
+    await booksStore.updateBookList();
+    await booksStore.updateCurrentlyReading();
 
     channel = supabase
         .channel('home-channel')
@@ -87,18 +88,18 @@ onMounted(async () => {
             'postgres_changes',
             { event: 'INSERT', schema: 'public', table: 'winning_books' },
             async () => {
-                const bookList = toRaw(useBookList.bookList);
-                await useBookList.updateCurrentlyReading();
+                const bookList = toRaw(booksStore.books);
+                await booksStore.updateCurrentlyReading();
                 modalStore.open(WinningBookModal, undefined, bookList);
                 await supabase.from('books').update({ archived: true }).eq('archived', false);
                 await supabase.from('votes').update({ archived: true }).eq('archived', false);
             },
         )
         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'books' }, () => {
-            useBookList.updateBookList();
+            booksStore.updateBookList();
         })
         .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'books' }, () => {
-            useBookList.updateBookList();
+            booksStore.updateBookList();
         })
         .subscribe();
 });

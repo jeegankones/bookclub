@@ -3,17 +3,17 @@
         <div class="card-body p-4">
             <h2
                 class="card-title"
-                :class="{ 'mb-2': bookListRef.length > 0 }"
+                :class="{ 'mb-2': books.length > 0 }"
             >
                 Submitted books
-                <span v-if="bookListRef.length">({{ bookListRef.length }})</span>
+                <span v-if="books.length">({{ books.length }})</span>
             </h2>
             <div
-                v-if="bookListRef.length > 0"
+                v-if="books.length > 0"
                 class="grid grid-cols-1 items-start gap-3 md:grid-cols-2"
             >
                 <BookCard
-                    v-for="book in bookListRef"
+                    v-for="book in books"
                     :key="book.id"
                     :book="book"
                 >
@@ -42,13 +42,15 @@
 </template>
 
 <script setup>
-import { toRef } from 'vue';
+import { computed } from 'vue';
 
 import { profile, supabase, userSession } from '../lib/supabase';
-import { useBookList } from '../stores/useBookList';
+import { useBooksStore } from '../stores/useBooksStore';
 import BookCard from './BookCard.vue';
 
-const bookListRef = toRef(useBookList, 'bookList');
+const booksStore = useBooksStore();
+
+const books = computed(() => booksStore.books);
 
 async function archiveBook(bookId) {
     await supabase.from('books').update({ archived: true }).eq('id', bookId);

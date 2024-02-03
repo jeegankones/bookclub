@@ -36,7 +36,7 @@ import { toRaw } from 'vue';
 
 import { supabase } from '../lib/supabase';
 import { useAlertStore } from '../stores/useAlertStore';
-import { useBookList } from '../stores/useBookList';
+import { useBooksStore } from '../stores/useBooksStore';
 import { useModalStore } from '../stores/useModalStore';
 import ConfirmPickWinnerModal from './ConfirmPickWinnerModal.vue';
 
@@ -44,6 +44,7 @@ defineProps({ voting: Boolean });
 
 const modalStore = useModalStore();
 const alertStore = useAlertStore();
+const booksStore = useBooksStore();
 
 function confirmPickWinner() {
     modalStore.open(ConfirmPickWinnerModal, [
@@ -65,7 +66,7 @@ function confirmPickWinner() {
 
 async function pickWinner() {
     const picks = [];
-    const bookList = toRaw(useBookList.bookList);
+    const bookList = toRaw(booksStore.books);
     bookList.forEach((book) => {
         if (book.voteCount) {
             const numberOfPicks = Math.round(Math.pow(book.voteCount, 1.5));

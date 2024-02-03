@@ -11,10 +11,12 @@
 </template>
 
 <script setup>
-import { toRef } from 'vue';
+import { computed } from 'vue';
 
-import { useBookList } from '../stores/useBookList';
+import { useBooksStore } from '../stores/useBooksStore';
 import BookCard from './BookCard.vue';
 
-const currentlyReading = toRef(useBookList, 'currentlyReading');
+const booksStore = useBooksStore();
+
+const currentlyReading = computed(() => booksStore.currentlyReading);
 </script>
