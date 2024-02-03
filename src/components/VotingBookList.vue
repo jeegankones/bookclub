@@ -42,13 +42,15 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 
 import { profile, supabase } from '../lib/supabase';
-import { useAlert } from '../stores/useAlert';
+import { useAlertStore } from '../stores/useAlertStore';
 import { useBookList } from '../stores/useBookList';
 import BookCard from './BookCard.vue';
 
 const voteCount = ref(0);
 const voteLimit = 3;
 let channel;
+
+const alertStore = useAlertStore();
 
 onMounted(async () => {
     await fetchAndUpdateUserVotes();
@@ -104,7 +106,7 @@ async function handleAddVote(book) {
     if (error) {
         book.userVoteCount--;
         voteCount.value--;
-        useAlert.newAlert();
+        alertStore.newAlert();
     }
 }
 
@@ -115,7 +117,7 @@ async function handleRemoveVote(book) {
     if (error) {
         book.userVoteCount++;
         voteCount.value++;
-        useAlert.newAlert();
+        alertStore.newAlert();
     }
 }
 </script>

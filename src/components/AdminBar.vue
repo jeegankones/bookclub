@@ -35,12 +35,14 @@
 import { toRaw } from 'vue';
 
 import { supabase } from '../lib/supabase';
-import { useAlert } from '../stores/useAlert';
+import { useAlertStore } from '../stores/useAlertStore';
 import { useBookList } from '../stores/useBookList';
 import { useModal } from '../stores/useModal';
 import ConfirmPickWinnerModal from './ConfirmPickWinnerModal.vue';
 
 defineProps({ voting: Boolean });
+
+const alertStore = useAlertStore();
 
 function confirmPickWinner() {
     useModal.open(ConfirmPickWinnerModal, [
@@ -72,7 +74,7 @@ async function pickWinner() {
         }
     });
     if (picks.length === 0) {
-        useAlert.newAlert('Could not pick a winner');
+        alertStore.newAlert('Could not pick a winner');
         return;
     }
     const pick = picks[Math.floor(Math.random() * picks.length)];

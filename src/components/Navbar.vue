@@ -38,7 +38,9 @@
 
 <script setup>
 import { supabase, userSession } from '../lib/supabase';
-import { useAlert } from '../stores/useAlert';
+import { useAlertStore } from '../stores/useAlertStore';
+
+const alertStore = useAlertStore();
 
 async function signInWithDiscord() {
     const { error } = await supabase.auth.signInWithOAuth({
@@ -48,14 +50,14 @@ async function signInWithDiscord() {
         },
     });
     if (error) {
-        useAlert.newAlert();
+        alertStore.newAlert();
     }
 }
 
 async function signout() {
     const { error } = await supabase.auth.signOut();
     if (error) {
-        useAlert.newAlert();
+        alertStore.newAlert();
     }
 }
 </script>

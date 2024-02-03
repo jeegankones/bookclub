@@ -84,7 +84,7 @@ import { onBeforeUnmount, onMounted, ref } from 'vue';
 
 import { getBooks } from '../api/googleBooks';
 import { profile, supabase } from '../lib/supabase';
-import { useAlert } from '../stores/useAlert';
+import { useAlertStore } from '../stores/useAlertStore';
 import { useBookList } from '../stores/useBookList';
 import { useModal } from '../stores/useModal';
 import { formatDateYear } from '../utils/formatDateYear';
@@ -96,6 +96,8 @@ const bookInput = ref(null);
 const results = ref(null);
 const submittedBookIds = ref(null);
 let channel;
+
+const alertStore = useAlertStore();
 
 onMounted(async () => {
     await syncGoogleIds();
@@ -186,7 +188,7 @@ const submitBook = async (book) => {
         .select('google_id');
     result.loading = false;
     if (error) {
-        useAlert.newAlert();
+        alertStore.newAlert();
         return;
     }
     submittedBookIds.value.push(data[0].google_id);
