@@ -47,11 +47,13 @@ import VotingBookList from '../components/VotingBookList.vue';
 import WinningBookModal from '../components/WinningBookModal.vue';
 import { profile, setProfile, supabase, userSession } from '../lib/supabase';
 import { useBookList } from '../stores/useBookList';
-import { useModal } from '../stores/useModal';
+import { useModalStore } from '../stores/useModalStore';
 
 const voting = ref(null);
 const loading = ref(null);
 let channel;
+
+const modalStore = useModalStore();
 
 onBeforeMount(async () => {
     loading.value = true;
@@ -76,7 +78,7 @@ onMounted(async () => {
                 if (payload.new.setting === 'voting') {
                     voting.value = payload.new.value;
                     if (voting.value) {
-                        useModal.open(VotingStartModal);
+                        modalStore.open(VotingStartModal);
                     }
                 }
             },
@@ -87,7 +89,7 @@ onMounted(async () => {
             async () => {
                 const bookList = toRaw(useBookList.bookList);
                 await useBookList.updateCurrentlyReading();
-                useModal.open(WinningBookModal, undefined, bookList);
+                modalStore.open(WinningBookModal, undefined, bookList);
                 await supabase.from('books').update({ archived: true }).eq('archived', false);
                 await supabase.from('votes').update({ archived: true }).eq('archived', false);
             },

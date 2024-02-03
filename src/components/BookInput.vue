@@ -86,7 +86,7 @@ import { getBooks } from '../api/googleBooks';
 import { profile, supabase } from '../lib/supabase';
 import { useAlertStore } from '../stores/useAlertStore';
 import { useBookList } from '../stores/useBookList';
-import { useModal } from '../stores/useModal';
+import { useModalStore } from '../stores/useModalStore';
 import { formatDateYear } from '../utils/formatDateYear';
 import Collapse from './Collapse.vue';
 import NoteInputModal from './NoteInputModal.vue';
@@ -97,6 +97,7 @@ const results = ref(null);
 const submittedBookIds = ref(null);
 let channel;
 
+const modalStore = useModalStore();
 const alertStore = useAlertStore();
 
 onMounted(async () => {
@@ -130,20 +131,20 @@ const isButtonDisabled = (book) => {
 };
 
 function openNoteInputModal(book) {
-    useModal.open(
+    modalStore.open(
         NoteInputModal,
         [
             {
                 label: 'Cancel',
                 callback() {
-                    useModal.close();
+                    modalStore.close();
                 },
             },
             {
                 label: 'Submit',
                 callback() {
-                    submitBook(useModal.model);
-                    useModal.close();
+                    submitBook(modalStore.model);
+                    modalStore.close();
                 },
             },
         ],

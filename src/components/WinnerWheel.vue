@@ -19,13 +19,15 @@ import * as d3 from 'd3';
 import seedrandom from 'seedrandom';
 import { computed, onMounted, ref, watch } from 'vue';
 
-import { useModal } from '../stores/useModal';
+import { useModalStore } from '../stores/useModalStore';
+
+const modalStore = useModalStore();
 
 const chartSvg = ref(null);
 const selectorSvg = ref(null);
 
 onMounted(() => {
-    if (useModal.afterEnter) {
+    if (modalStore.afterEnter) {
         renderChart();
         renderSelector();
         spinWheel();
@@ -34,7 +36,7 @@ onMounted(() => {
 
 // Watchers
 watch(
-    () => useModal.afterEnter,
+    () => modalStore.afterEnter,
     (value) => {
         if (value) {
             renderChart();

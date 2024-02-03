@@ -37,25 +37,26 @@ import { toRaw } from 'vue';
 import { supabase } from '../lib/supabase';
 import { useAlertStore } from '../stores/useAlertStore';
 import { useBookList } from '../stores/useBookList';
-import { useModal } from '../stores/useModal';
+import { useModalStore } from '../stores/useModalStore';
 import ConfirmPickWinnerModal from './ConfirmPickWinnerModal.vue';
 
 defineProps({ voting: Boolean });
 
+const modalStore = useModalStore();
 const alertStore = useAlertStore();
 
 function confirmPickWinner() {
-    useModal.open(ConfirmPickWinnerModal, [
+    modalStore.open(ConfirmPickWinnerModal, [
         {
             label: 'No',
             callback() {
-                useModal.close();
+                modalStore.close();
             },
         },
         {
             label: 'Yes',
             async callback() {
-                useModal.close();
+                modalStore.close();
                 await pickWinner();
             },
         },
