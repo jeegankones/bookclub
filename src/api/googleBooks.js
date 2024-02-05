@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const url = 'https://www.googleapis.com/books/v1/volumes';
 
-function getBooks(query) {
+const fetchGoogleBooksResults = (query) => {
     return axios.get(url, {
         params: {
             q: query,
@@ -12,6 +12,6 @@ function getBooks(query) {
             maxResults: 3,
         },
     });
-}
+};
 
-export { getBooks };
+export { fetchGoogleBooksResults };

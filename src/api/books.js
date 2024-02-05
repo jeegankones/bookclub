@@ -1,0 +1,42 @@
+import { profile, supabase } from '../lib/supabase';
+
+const getActiveBooksWithProfiles = () => {
+    return supabase.from('books').select('*, profiles (id, full_name)').eq('archived', false);
+};
+
+const archiveBook = (id) => {
+    return supabase.from('books').update({ archived: true }).eq('id', id);
+};
+
+const submitBook = (book) => {
+    return supabase.from('books').upsert(
+        {
+            title: book.volumeInfo.title,
+            submitted_by: profile.value.id,
+            google_id: book.id,
+            archived: false,
+            user_note: book.userNote ? book.userNote.trim() : null,
+            ...(book.volumeInfo.publishedDate && {
+                published_date: book.volumeInfo.publishedDate,
+            }),
+            ...(book.volumeInfo.pageCount && {
+                page_count: book.volumeInfo.pageCount,
+            }),
+            ...(book.volumeInfo.authors && {
+                author: book.volumeInfo.authors[0],
+            }),
+            ...(book.volumeInfo.description && {
+                description: book.volumeInfo.description,
+            }),
+            ...(book.volumeInfo.imageLinks?.smallThumbnail && {
+                small_thumbnail: book.volumeInfo.imageLinks.smallThumbnail,
+            }),
+            ...(book.volumeInfo.imageLinks?.thumbnail && {
+                thumbnail: book.volumeInfo.imageLinks.thumbnail,
+            }),
+        },
+        { onConflict: 'google_id' },
+    );
+};
+
+export { archiveBook, getActiveBooksWithProfiles, submitBook };
