@@ -5,7 +5,7 @@
             <h3 class="mb-2">Vote up to {{ voteLimit }} times ({{ voteCount }}/{{ voteLimit }})</h3>
             <div class="grid grid-cols-1 items-start gap-3 md:grid-cols-2">
                 <BookCard
-                    v-for="book in booksStore.books"
+                    v-for="book in books"
                     :key="book.id"
                     :book="book"
                     voting
@@ -25,7 +25,7 @@
                             <p class="my-1">{{ book.userVoteCount }}</p>
                             <button
                                 class="btn btn-sm w-10"
-                                :disabled="book.userVoteCount === 0"
+                                :disabled="book.userVoteCount <= 0"
                                 @click="handleRemoveVote(book)"
                             >
                                 <i class="fas fa-minus"></i>
@@ -39,7 +39,7 @@
 </template>
 
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 
 import { profile, supabase } from '../lib/supabase';
 import { useAlertStore } from '../stores/useAlertStore';
@@ -53,14 +53,16 @@ let channel;
 const alertStore = useAlertStore();
 const booksStore = useBooksStore();
 
+const books = computed(() => booksStore.booksSortedByUpdatedAt);
+
 onMounted(async () => {
     await fetchAndUpdateUserVotes();
-    await booksStore.updateVoteCounts();
+    await booksStore.updateGlobalVoteCounts();
 
     channel = supabase
         .channel('votes-all-channel')
         .on('postgres_changes', { event: '*', schema: 'public', table: 'votes' }, () => {
-            booksStore.updateVoteCounts();
+            booksStore.updateGlobalVoteCounts();
         })
         .subscribe();
 });
@@ -101,24 +103,26 @@ function deleteVote(book) {
 }
 
 async function handleAddVote(book) {
+    const { error } = await insertVote(book);
+
+    if (error) {
+        alertStore.newAlert();
+        return;
+    }
+
     book.userVoteCount++;
     voteCount.value++;
-    const { error } = await insertVote(book);
-    if (error) {
-        book.userVoteCount--;
-        voteCount.value--;
-        alertStore.newAlert();
-    }
 }
 
 async function handleRemoveVote(book) {
-    book.userVoteCount--;
-    voteCount.value--;
     const { error } = await deleteVote(book);
+
     if (error) {
-        book.userVoteCount++;
-        voteCount.value++;
         alertStore.newAlert();
+        return;
     }
+
+    book.userVoteCount = book.userVoteCount > 0 ? book.userVoteCount - 1 : 0;
+    voteCount.value = voteCount.value > 0 ? voteCount.value - 1 : 0;
 }
 </script>

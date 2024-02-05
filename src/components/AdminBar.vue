@@ -76,7 +76,7 @@ async function pickWinner() {
         }
     });
     if (picks.length === 0) {
-        alertStore.newAlert('Could not pick a winner');
+        alertStore.newAlert('Could not pick a winner.');
         return;
     }
     const pick = picks[Math.floor(Math.random() * picks.length)];

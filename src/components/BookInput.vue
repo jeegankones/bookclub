@@ -80,11 +80,9 @@
 
 <script setup>
 import _debounce from 'lodash/debounce';
-import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { ref } from 'vue';
 
-import { getBooks } from '../api/googleBooks';
-import { profile, supabase } from '../lib/supabase';
-import { useAlertStore } from '../stores/useAlertStore';
+import { fetchGoogleBooksResults } from '../api/googleBooks';
 import { useBooksStore } from '../stores/useBooksStore';
 import { useModalStore } from '../stores/useModalStore';
 import { formatDateYear } from '../utils/formatDateYear';
@@ -93,41 +91,16 @@ import NoteInputModal from './NoteInputModal.vue';
 import Spinner from './Spinner.vue';
 
 const bookInput = ref(null);
-const results = ref(null);
-const submittedBookIds = ref(null);
-let channel;
+const results = ref([]);
 
 const modalStore = useModalStore();
-const alertStore = useAlertStore();
 const booksStore = useBooksStore();
-
-onMounted(async () => {
-    await syncGoogleIds();
-
-    channel = supabase
-        .channel('book-input-change-channel')
-        .on(
-            'postgres_changes',
-            { event: 'UPDATE', schema: 'public', table: 'books' },
-            syncGoogleIds,
-        )
-        .subscribe();
-});
-
-onBeforeUnmount(async () => {
-    await supabase.removeChannel(channel);
-});
-
-const syncGoogleIds = async () => {
-    let { data: books } = await supabase.from('books').select('google_id').eq('archived', false);
-    submittedBookIds.value = books.map((book) => book.google_id);
-};
 
 const isButtonDisabled = (book) => {
     return (
         book.loading ||
-        submittedBookIds.value.includes(book.id) ||
-        booksStore?.currentlyReading?.google_id === book.id
+        booksStore.bookIds.includes(book.id) ||
+        booksStore.currentlyReading?.google_id === book.id
     );
 };
 
@@ -157,56 +130,23 @@ const submitBook = async (book) => {
     bookInput.value.focus();
     const result = results.value.find((result) => result.id === book.id);
     result.loading = true;
-    const { data, error } = await supabase
-        .from('books')
-        .upsert(
-            {
-                title: book.volumeInfo.title,
-                submitted_by: profile.value.id,
-                google_id: book.id,
-                archived: false,
-                user_note: book.userNote ? book.userNote.trim() : null,
-                ...(book.volumeInfo.publishedDate && {
-                    published_date: book.volumeInfo.publishedDate,
-                }),
-                ...(book.volumeInfo.pageCount && {
-                    page_count: book.volumeInfo.pageCount,
-                }),
-                ...(book.volumeInfo.authors && {
-                    author: book.volumeInfo.authors[0],
-                }),
-                ...(book.volumeInfo.description && {
-                    description: book.volumeInfo.description,
-                }),
-                ...(book.volumeInfo.imageLinks?.smallThumbnail && {
-                    small_thumbnail: book.volumeInfo.imageLinks.smallThumbnail,
-                }),
-                ...(book.volumeInfo.imageLinks?.thumbnail && {
-                    thumbnail: book.volumeInfo.imageLinks.thumbnail,
-                }),
-            },
-            { onConflict: 'google_id' },
-        )
-        .select('google_id');
+    await booksStore.submitBook(book);
     result.loading = false;
-    if (error) {
-        alertStore.newAlert();
-        return;
-    }
-    submittedBookIds.value.push(data[0].google_id);
 };
 
-const searchBooks = _debounce(async (query) => {
+const searchBooks = _debounce(async (input) => {
+    const query = input.trim().split(' ').join('+');
     if (query) {
-        const response = await getBooks(query);
+        const response = await fetchGoogleBooksResults(query);
         results.value = response.data.items;
-    } else {
-        results.value = null;
     }
 }, 500);
 
 const handleInput = (input) => {
-    const query = input.trim().split(' ').join('+');
-    searchBooks(query);
+    if (input) {
+        searchBooks(input);
+    } else {
+        results.value = [];
+    }
 };
 </script>

@@ -24,9 +24,17 @@
                                 userSession?.user?.id === book.submitted_by
                             "
                             class="btn btn-sm ml-auto"
-                            @click="archiveBook(book.id)"
+                            :disabled="book.archiveLoading"
+                            @click="booksStore.archiveBook(book.id)"
                         >
-                            <i class="far fa-trash-can"></i>
+                            <Spinner
+                                v-if="book.archiveLoading"
+                                size="xs"
+                            />
+                            <i
+                                v-else
+                                class="far fa-trash-can"
+                            ></i>
                         </button>
                     </template>
                 </BookCard>
@@ -44,20 +52,12 @@
 <script setup>
 import { computed } from 'vue';
 
-import { profile, supabase, userSession } from '../lib/supabase';
+import { profile, userSession } from '../lib/supabase';
 import { useBooksStore } from '../stores/useBooksStore';
 import BookCard from './BookCard.vue';
+import Spinner from './Spinner.vue';
 
 const booksStore = useBooksStore();
 
-const books = computed(() => booksStore.books);
-
-async function archiveBook(bookId) {
-    await supabase.from('books').update({ archived: true }).eq('id', bookId);
-    await supabase
-        .from('votes')
-        .update({ archived: true })
-        .eq('book_id', bookId)
-        .eq('archived', false);
-}
+const books = computed(() => booksStore.booksSortedByUpdatedAt);
 </script>

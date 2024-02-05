@@ -67,8 +67,8 @@ onBeforeMount(async () => {
 });
 
 onMounted(async () => {
-    await booksStore.updateBookList();
-    await booksStore.updateCurrentlyReading();
+    await booksStore.fetchBookList();
+    await booksStore.fetchCurrentlyReading();
 
     channel = supabase
         .channel('home-channel')
@@ -89,18 +89,22 @@ onMounted(async () => {
             { event: 'INSERT', schema: 'public', table: 'winning_books' },
             async () => {
                 const bookList = toRaw(booksStore.books);
-                await booksStore.updateCurrentlyReading();
+                await booksStore.fetchCurrentlyReading();
                 modalStore.open(WinningBookModal, undefined, bookList);
                 await supabase.from('books').update({ archived: true }).eq('archived', false);
                 await supabase.from('votes').update({ archived: true }).eq('archived', false);
             },
         )
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'books' }, () => {
-            booksStore.updateBookList();
-        })
-        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'books' }, () => {
-            booksStore.updateBookList();
-        })
+        .on(
+            'postgres_changes',
+            { event: 'INSERT', schema: 'public', table: 'books' },
+            booksStore.fetchBookList,
+        )
+        .on(
+            'postgres_changes',
+            { event: 'UPDATE', schema: 'public', table: 'books' },
+            booksStore.fetchBookList,
+        )
         .subscribe();
 });
 

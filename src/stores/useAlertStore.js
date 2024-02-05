@@ -1,9 +1,11 @@
 import { defineStore } from 'pinia';
 
+let timer;
+
 export const useAlertStore = defineStore('alert', {
     state: () => ({
         show: false,
-        message: 'There was an error, please try again.',
+        message: 'There was an error.',
     }),
     actions: {
         newAlert(message) {
@@ -13,7 +15,8 @@ export const useAlertStore = defineStore('alert', {
 
             this.show = true;
 
-            setTimeout(() => {
+            clearTimeout(timer);
+            timer = setTimeout(() => {
                 this.show = false;
             }, 5000);
         },
