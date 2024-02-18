@@ -9,7 +9,7 @@ const supabase = createClient(
 const userSession = ref(null);
 const profile = ref(null);
 
-const setProfile = async () => {
+async function setProfile() {
     if (userSession?.value?.user?.id) {
         const { data } = await supabase
             .from('profiles')
@@ -19,6 +19,6 @@ const setProfile = async () => {
     } else {
         profile.value = null;
     }
-};
+}
 
 export { profile, setProfile, supabase, userSession };

@@ -166,9 +166,9 @@ function shrinkText() {
 }
 
 function renderChart() {
-    const textRotation = (d) => {
+    function textRotation(d) {
         return ((d.startAngle / 2 + d.endAngle / 2 + Math.PI) * 180) / Math.PI;
-    };
+    }
 
     const color = d3.scaleOrdinal().range(d3.schemeSet2);
 

@@ -1,14 +1,14 @@
 import { profile, supabase } from '../lib/supabase';
 
-const getActiveBooksWithProfiles = () => {
+function getActiveBooksWithProfiles() {
     return supabase.from('books').select('*, profiles (id, full_name)').eq('archived', false);
-};
+}
 
-const archiveBook = (id) => {
+function archiveBook(id) {
     return supabase.from('books').update({ archived: true }).eq('id', id);
-};
+}
 
-const submitBook = (book) => {
+function submitBook(book) {
     return supabase.from('books').upsert(
         {
             title: book.volumeInfo.title,
@@ -37,6 +37,6 @@ const submitBook = (book) => {
         },
         { onConflict: 'google_id' },
     );
-};
+}
 
 export { archiveBook, getActiveBooksWithProfiles, submitBook };

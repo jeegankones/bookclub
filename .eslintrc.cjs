@@ -12,6 +12,7 @@ module.exports = {
         'plugin:prettier/recommended',
     ],
     rules: {
+        'func-style': ['error', 'declaration'],
         'prettier/prettier': 'warn',
         'simple-import-sort/imports': 'error',
         'simple-import-sort/exports': 'error',

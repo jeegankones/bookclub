@@ -96,13 +96,13 @@ const results = ref([]);
 const modalStore = useModalStore();
 const booksStore = useBooksStore();
 
-const isButtonDisabled = (book) => {
+function isButtonDisabled(book) {
     return (
         book.loading ||
         booksStore.bookIds.includes(book.id) ||
         booksStore.currentlyReading?.google_id === book.id
     );
-};
+}
 
 function openNoteInputModal(book) {
     modalStore.open(
@@ -126,13 +126,13 @@ function openNoteInputModal(book) {
     );
 }
 
-const submitBook = async (book) => {
+async function submitBook(book) {
     bookInput.value.focus();
     const result = results.value.find((result) => result.id === book.id);
     result.loading = true;
     await booksStore.submitBook(book);
     result.loading = false;
-};
+}
 
 const searchBooks = _debounce(async (input) => {
     const query = input.trim().split(' ').join('+');
@@ -142,11 +142,11 @@ const searchBooks = _debounce(async (input) => {
     }
 }, 500);
 
-const handleInput = (input) => {
+function handleInput(input) {
     if (input) {
         searchBooks(input);
     } else {
         results.value = [];
     }
-};
+}
 </script>
