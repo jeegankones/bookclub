@@ -142,10 +142,10 @@ const searchBooks = _debounce(async (input) => {
 }, 500);
 
 function handleInput(input) {
-    if (input) {
-        searchBooks(input);
-    } else {
+    if (!input) {
         results.value = [];
     }
+
+    searchBooks(input);
 }
 </script>
