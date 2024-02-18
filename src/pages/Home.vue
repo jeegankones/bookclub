@@ -34,7 +34,6 @@
 
 <script setup>
 import { onBeforeMount, onBeforeUnmount, onMounted, ref, toRaw } from 'vue';
-
 import AdminBar from '../components/AdminBar.vue';
 import Alert from '../components/Alert.vue';
 import BookInput from '../components/BookInput.vue';

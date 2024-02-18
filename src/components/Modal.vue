@@ -50,7 +50,6 @@
 
 <script setup>
 import { ref } from 'vue';
-
 import { useModalStore } from '../stores/useModalStore';
 
 const modalStore = useModalStore();

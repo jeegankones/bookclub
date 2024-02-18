@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-
 import { archiveBook, getActiveBooksWithProfiles, submitBook } from '../api/books';
 import { archiveVotesByBookId } from '../api/votes';
 import { getMostRecentWinningBook } from '../api/winningBooks';

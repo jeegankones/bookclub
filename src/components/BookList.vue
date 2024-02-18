@@ -51,7 +51,6 @@
 
 <script setup>
 import { computed } from 'vue';
-
 import { profile, userSession } from '../lib/supabase';
 import { useBooksStore } from '../stores/useBooksStore';
 import BookCard from './BookCard.vue';

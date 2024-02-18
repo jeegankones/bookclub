@@ -33,7 +33,6 @@
 
 <script setup>
 import { toRaw } from 'vue';
-
 import { supabase } from '../lib/supabase';
 import { useAlertStore } from '../stores/useAlertStore';
 import { useBooksStore } from '../stores/useBooksStore';

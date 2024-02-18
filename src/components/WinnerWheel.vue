@@ -18,7 +18,6 @@
 import * as d3 from 'd3';
 import seedrandom from 'seedrandom';
 import { computed, onMounted, ref, watch } from 'vue';
-
 import { useModalStore } from '../stores/useModalStore';
 
 const modalStore = useModalStore();

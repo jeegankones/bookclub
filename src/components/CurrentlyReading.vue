@@ -12,7 +12,6 @@
 
 <script setup>
 import { computed } from 'vue';
-
 import { useBooksStore } from '../stores/useBooksStore';
 import BookCard from './BookCard.vue';
 

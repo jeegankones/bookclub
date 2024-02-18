@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-
 import { deleteVote, fetchUserVotes, insertVote } from '../api/votes';
 import { useAlertStore } from './useAlertStore';
 import { useBooksStore } from './useBooksStore';

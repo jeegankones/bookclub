@@ -40,7 +40,6 @@
 
 <script setup>
 import { computed, onBeforeUnmount, onMounted } from 'vue';
-
 import { profile, supabase } from '../lib/supabase';
 import { useBooksStore } from '../stores/useBooksStore';
 import { useVotesStore } from '../stores/useVotesStore';

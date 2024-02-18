@@ -81,7 +81,6 @@
 <script setup>
 import _debounce from 'lodash/debounce';
 import { ref } from 'vue';
-
 import { fetchGoogleBooksResults } from '../api/googleBooks';
 import { useBooksStore } from '../stores/useBooksStore';
 import { useModalStore } from '../stores/useModalStore';

@@ -14,7 +14,10 @@ module.exports = {
     rules: {
         'func-style': ['error', 'declaration'],
         'prettier/prettier': 'warn',
-        'simple-import-sort/imports': 'error',
+        'simple-import-sort/imports': [
+            'error',
+            { groups: [['^\\u0000', '^node:', '^@?\\w', '^', '^\\.']] },
+        ],
         'simple-import-sort/exports': 'error',
         'vue/multi-word-component-names': 'off',
         'tailwindcss/no-custom-classname': 'off',

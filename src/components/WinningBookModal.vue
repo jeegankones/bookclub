@@ -32,7 +32,6 @@
 
 <script setup>
 import { computed, ref } from 'vue';
-
 import { useBooksStore } from '../stores/useBooksStore';
 import Spinner from './Spinner.vue';
 import WinnerWheel from './WinnerWheel.vue';
