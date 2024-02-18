@@ -1,19 +1,19 @@
 <template>
-    <Modal v-if="userSession" />
+    <Modal v-if="isLoggedIn" />
     <Alert />
     <Navbar />
     <div class="mt-28">
         <div
             v-if="!loading"
-            class="container mx-auto space-y-5 px-2"
+            class="container mx-auto mb-5 space-y-5 px-2"
         >
             <AdminBar
-                v-if="profile?.role === 'admin'"
+                v-if="userRole === 'admin'"
                 :voting="voting"
             />
             <CurrentlyReading v-if="!voting && booksStore.currentlyReading" />
-            <BookInput v-if="!voting && userSession" />
-            <VotingBookList v-if="voting && userSession" />
+            <BookInput v-if="!voting && isLoggedIn" />
+            <VotingBookList v-if="voting && isLoggedIn" />
             <BookList v-else />
         </div>
         <div
@@ -26,7 +26,8 @@
 </template>
 
 <script setup>
-import { computed, onBeforeMount, onBeforeUnmount, onMounted, ref, toRaw } from 'vue';
+import { storeToRefs } from 'pinia';
+import { computed, onBeforeUnmount, onMounted, ref, toRaw } from 'vue';
 import AdminBar from '../components/AdminBar.vue';
 import Alert from '../components/Alert.vue';
 import BookInput from '../components/BookInput.vue';
@@ -37,9 +38,10 @@ import Navbar from '../components/Navbar.vue';
 import Spinner from '../components/Spinner.vue';
 import VotingBookList from '../components/VotingBookList.vue';
 import WinningBookModal from '../components/WinningBookModal.vue';
-import { profile, setProfile, supabase, userSession } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 import { useBooksStore } from '../stores/useBooksStore';
 import { useModalStore } from '../stores/useModalStore';
+import { useSessionStore } from '../stores/useSessionStore';
 import { useSettingsStore } from '../stores/useSettingsStore';
 
 let channel;
@@ -48,17 +50,14 @@ const loading = ref(null);
 const modalStore = useModalStore();
 const booksStore = useBooksStore();
 const settingsStore = useSettingsStore();
+const sessionStore = useSessionStore();
 
 const voting = computed(() => settingsStore.voting);
-
-onBeforeMount(async () => {
-    loading.value = true;
-    userSession.value = (await supabase.auth.getSession()).data?.session;
-    await setProfile();
-    await settingsStore.fetchSettings();
-});
+const { userRole, isLoggedIn } = storeToRefs(sessionStore);
 
 onMounted(async () => {
+    loading.value = true;
+    await settingsStore.fetchSettings();
     await booksStore.fetchBookList();
     await booksStore.fetchCurrentlyReading();
 

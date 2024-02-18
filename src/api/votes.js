@@ -1,4 +1,4 @@
-import { profile, supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 
 function archiveVotesByBookId(bookId) {
     return supabase
@@ -8,26 +8,22 @@ function archiveVotesByBookId(bookId) {
         .eq('archived', false);
 }
 
-function fetchUserVotes() {
-    return supabase
-        .from('votes')
-        .select('*')
-        .eq('archived', false)
-        .eq('profile_id', profile.value.id);
+function fetchUserVotes(userId) {
+    return supabase.from('votes').select('*').eq('archived', false).eq('profile_id', userId);
 }
 
-function insertVote(book) {
-    return supabase.from('votes').insert({ book_id: book.id, profile_id: profile.value.id });
+function insertVote(book, userId) {
+    return supabase.from('votes').insert({ book_id: book.id, profile_id: userId });
 }
 
-function deleteVote(book) {
+function deleteVote(book, userId) {
     return supabase
         .from('votes')
         .delete()
         .match({
             archived: false,
             book_id: book.id,
-            profile_id: profile.value.id,
+            profile_id: userId,
         })
         .order('created_at')
         .limit(1);

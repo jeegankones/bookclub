@@ -39,20 +39,24 @@
 </template>
 
 <script setup>
+import { storeToRefs } from 'pinia';
 import { computed, onBeforeUnmount, onMounted } from 'vue';
-import { profile, supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 import { useBooksStore } from '../stores/useBooksStore';
+import { useSessionStore } from '../stores/useSessionStore';
 import { useVotesStore } from '../stores/useVotesStore';
 import BookCard from './BookCard.vue';
 
 const booksStore = useBooksStore();
 const votesStore = useVotesStore();
+const sessionStore = useSessionStore();
 
 const voteLimit = 3;
 let channel;
 
 const voteCount = computed(() => votesStore.userVotes.length);
 const books = computed(() => booksStore.booksSortedByUpdatedAt);
+const { userRole, userId } = storeToRefs(sessionStore);
 
 onMounted(async () => {
     await votesStore.fetchUserVotes();
@@ -71,6 +75,6 @@ onBeforeUnmount(async () => {
 });
 
 function canVote(book) {
-    return profile?.value.role === 'admin' || profile.value.id !== book.submitted_by;
+    return userRole === 'admin' || userId !== book.submitted_by;
 }
 </script>

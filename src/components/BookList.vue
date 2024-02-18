@@ -19,10 +19,7 @@
                 >
                     <template #buttons>
                         <button
-                            v-if="
-                                profile?.role === 'admin' ||
-                                userSession?.user?.id === book.submitted_by
-                            "
+                            v-if="userRole === 'admin' || userId === book.submitted_by"
                             class="btn btn-sm ml-auto"
                             :disabled="book.archiveLoading"
                             @click="booksStore.archiveBook(book.id)"
@@ -50,13 +47,16 @@
 </template>
 
 <script setup>
+import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
-import { profile, userSession } from '../lib/supabase';
 import { useBooksStore } from '../stores/useBooksStore';
+import { useSessionStore } from '../stores/useSessionStore';
 import BookCard from './BookCard.vue';
 import Spinner from './Spinner.vue';
 
 const booksStore = useBooksStore();
+const sessionStore = useSessionStore();
 
 const books = computed(() => booksStore.booksSortedByUpdatedAt);
+const { userRole, userId } = storeToRefs(sessionStore);
 </script>

@@ -1,4 +1,4 @@
-import { profile, supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 
 function getActiveBooksWithProfiles() {
     return supabase.from('books').select('*, profiles (id, full_name)').eq('archived', false);
@@ -8,11 +8,11 @@ function archiveBook(id) {
     return supabase.from('books').update({ archived: true }).eq('id', id);
 }
 
-function submitBook(book) {
+function submitBook(book, userId) {
     return supabase.from('books').upsert(
         {
             title: book.volumeInfo.title,
-            submitted_by: profile.value.id,
+            submitted_by: userId,
             google_id: book.id,
             archived: false,
             user_note: book.userNote ? book.userNote.trim() : null,

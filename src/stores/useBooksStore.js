@@ -4,6 +4,7 @@ import { archiveVotesByBookId } from '../api/votes';
 import { getMostRecentWinningBook } from '../api/winningBooks';
 import { supabase } from '../lib/supabase';
 import { useAlertStore } from '../stores/useAlertStore';
+import { useSessionStore } from './useSessionStore';
 
 export const useBooksStore = defineStore('books', {
     state: () => ({
@@ -53,7 +54,9 @@ export const useBooksStore = defineStore('books', {
             await archiveVotesByBookId(id);
         },
         async submitBook(book) {
-            const { error } = await submitBook(book);
+            const sessionStore = useSessionStore();
+
+            const { error } = await submitBook(book, sessionStore.userId);
 
             if (error) {
                 useAlertStore().newAlert('Could not submit book. Try again.');

@@ -2,12 +2,12 @@
     <div class="navbar fixed top-0 z-50 bg-base-100 shadow-lg">
         <div class="container mx-auto flex justify-between px-4 py-2">
             <h1 class="my-2 font-bold">Book Club</h1>
-            <div v-if="userSession">
+            <div v-if="isLoggedIn">
                 <div class="dropdown-end dropdown">
                     <label tabindex="0">
                         <div class="avatar">
                             <div class="w-12 rounded-full">
-                                <img :src="userSession.user.user_metadata.avatar_url" />
+                                <img :src="userAvatar" />
                             </div>
                         </div>
                     </label>
@@ -37,10 +37,15 @@
 </template>
 
 <script setup>
-import { supabase, userSession } from '../lib/supabase';
+import { storeToRefs } from 'pinia';
+import { supabase } from '../lib/supabase';
 import { useAlertStore } from '../stores/useAlertStore';
+import { useSessionStore } from '../stores/useSessionStore';
 
 const alertStore = useAlertStore();
+const sessionStore = useSessionStore();
+
+const { userAvatar, isLoggedIn } = storeToRefs(sessionStore);
 
 async function signInWithDiscord() {
     const { error } = await supabase.auth.signInWithOAuth({
@@ -49,15 +54,13 @@ async function signInWithDiscord() {
             redirectTo: import.meta.env.VITE_APP_SUPABASE_REDIRECT_URL,
         },
     });
+
     if (error) {
-        alertStore.newAlert();
+        alertStore.newAlert('Could not sign in. Try again.');
     }
 }
 
 async function signout() {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-        alertStore.newAlert();
-    }
+    await supabase.auth.signOut();
 }
 </script>

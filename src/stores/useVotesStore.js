@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { deleteVote, fetchUserVotes, insertVote } from '../api/votes';
 import { useAlertStore } from './useAlertStore';
 import { useBooksStore } from './useBooksStore';
+import { useSessionStore } from './useSessionStore';
 
 export const useVotesStore = defineStore('votes', {
     state: () => ({
@@ -9,7 +10,8 @@ export const useVotesStore = defineStore('votes', {
     }),
     actions: {
         async fetchUserVotes() {
-            const { data, error } = await fetchUserVotes();
+            const sessionStore = useSessionStore();
+            const { data, error } = await fetchUserVotes(sessionStore.userId);
 
             if (error) {
                 useAlertStore().newAlert();
@@ -20,7 +22,8 @@ export const useVotesStore = defineStore('votes', {
             useBooksStore().updateUserVotes(this.userVotes);
         },
         async insertVote(book) {
-            const { error } = await insertVote(book);
+            const sessionStore = useSessionStore();
+            const { error } = await insertVote(book, sessionStore.userId);
 
             if (error) {
                 useAlertStore().newAlert('Could not add vote. Try again.');
@@ -30,7 +33,8 @@ export const useVotesStore = defineStore('votes', {
             await this.fetchUserVotes();
         },
         async deleteVote(book) {
-            const { error } = await deleteVote(book);
+            const sessionStore = useSessionStore();
+            const { error } = await deleteVote(book, sessionStore.userId);
 
             if (error) {
                 useAlertStore().newAlert('Could not remove vote. Try again.');

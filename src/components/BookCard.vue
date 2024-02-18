@@ -67,7 +67,7 @@
                         </span>
                     </p>
                     <p
-                        v-if="userSession"
+                        v-if="isLoggedIn"
                         class="mt-2 text-xs text-gray-400"
                         :class="{ 'md:text-sm': size === 'lg' }"
                     >
@@ -77,7 +77,7 @@
                 <slot name="buttons"></slot>
             </div>
             <div
-                v-if="book.user_note && userSession"
+                v-if="book.user_note && isLoggedIn"
                 class="mt-2 text-sm italic text-gray-400"
                 :class="{ 'md:text-lg': size === 'lg' }"
             >
@@ -95,13 +95,18 @@
 </template>
 
 <script setup>
-import { userSession } from '../lib/supabase';
+import { storeToRefs } from 'pinia';
+import { useSessionStore } from '../stores/useSessionStore';
 import { formatDateYear } from '../utils/formatDateYear';
 import Collapse from './Collapse.vue';
+
+const sessionStore = useSessionStore();
 
 defineProps({
     book: { type: Object, default: null },
     size: { type: String, default: 'md' },
     voting: Boolean,
 });
+
+const { isLoggedIn } = storeToRefs(sessionStore);
 </script>
