@@ -24,7 +24,7 @@ export const useSessionStore = defineStore('session', {
             await this.fetchUserRole();
         },
         async fetchUserRole() {
-            if (!this.id) {
+            if (!this.userId) {
                 this.userRole = null;
                 return;
             }
