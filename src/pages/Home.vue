@@ -3,37 +3,30 @@
     <Alert />
     <Navbar />
     <div class="mt-28">
-        <AdminBar
-            v-if="!loading && profile?.role === 'admin'"
-            class="mt-5"
-            :voting="voting"
-        />
         <div
             v-if="!loading"
-            class="container mx-auto px-2"
+            class="container mx-auto space-y-5 px-2"
         >
-            <CurrentlyReading
-                v-if="!voting && booksStore.currentlyReading"
-                class="mt-5"
+            <AdminBar
+                v-if="profile?.role === 'admin'"
+                :voting="voting"
             />
-            <BookInput
-                v-if="!voting && userSession"
-                class="mt-5"
-            />
-            <VotingBookList
-                v-if="voting && userSession"
-                class="mt-5"
-            />
-            <BookList
-                v-else
-                class="my-5"
-            />
+            <CurrentlyReading v-if="!voting && booksStore.currentlyReading" />
+            <BookInput v-if="!voting && userSession" />
+            <VotingBookList v-if="voting && userSession" />
+            <BookList v-else />
+        </div>
+        <div
+            v-else
+            class="absolute top-0 flex h-screen w-screen items-center justify-center"
+        >
+            <Spinner size="lg" />
         </div>
     </div>
 </template>
 
 <script setup>
-import { onBeforeMount, onBeforeUnmount, onMounted, ref, toRaw } from 'vue';
+import { computed, onBeforeMount, onBeforeUnmount, onMounted, ref, toRaw } from 'vue';
 import AdminBar from '../components/AdminBar.vue';
 import Alert from '../components/Alert.vue';
 import BookInput from '../components/BookInput.vue';
@@ -41,28 +34,28 @@ import BookList from '../components/BookList.vue';
 import CurrentlyReading from '../components/CurrentlyReading.vue';
 import Modal from '../components/Modal.vue';
 import Navbar from '../components/Navbar.vue';
-import VotingStartModal from '../components/VoteStartModal.vue';
+import Spinner from '../components/Spinner.vue';
 import VotingBookList from '../components/VotingBookList.vue';
 import WinningBookModal from '../components/WinningBookModal.vue';
 import { profile, setProfile, supabase, userSession } from '../lib/supabase';
 import { useBooksStore } from '../stores/useBooksStore';
 import { useModalStore } from '../stores/useModalStore';
+import { useSettingsStore } from '../stores/useSettingsStore';
 
-const voting = ref(null);
-const loading = ref(null);
 let channel;
+const loading = ref(null);
 
 const modalStore = useModalStore();
 const booksStore = useBooksStore();
+const settingsStore = useSettingsStore();
+
+const voting = computed(() => settingsStore.voting);
 
 onBeforeMount(async () => {
     loading.value = true;
     userSession.value = (await supabase.auth.getSession()).data?.session;
     await setProfile();
-
-    const { data } = await supabase.from('settings').select('value').eq('setting', 'voting');
-    voting.value = data[0]?.value;
-    loading.value = false;
+    await settingsStore.fetchSettings();
 });
 
 onMounted(async () => {
@@ -76,10 +69,7 @@ onMounted(async () => {
             { event: 'UPDATE', schema: 'public', table: 'settings' },
             (payload) => {
                 if (payload.new.setting === 'voting') {
-                    voting.value = payload.new.value;
-                    if (voting.value) {
-                        modalStore.open(VotingStartModal);
-                    }
+                    settingsStore.updateVoting(payload.new.value);
                 }
             },
         )
@@ -105,6 +95,7 @@ onMounted(async () => {
             booksStore.fetchBookList,
         )
         .subscribe();
+    loading.value = false;
 });
 
 onBeforeUnmount(async () => {

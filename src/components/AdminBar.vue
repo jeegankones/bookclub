@@ -1,5 +1,5 @@
 <template>
-    <div class="container mx-auto px-2">
+    <div class="container mx-auto">
         <div class="card mx-auto max-w-7xl bg-base-200 shadow-lg">
             <div class="card-body p-4">
                 <h2 class="card-title mb-2">Admin</h2>
