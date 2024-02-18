@@ -21,48 +21,43 @@ export const useBooksStore = defineStore('books', {
     },
     actions: {
         async fetchCurrentlyReading() {
-            const alertStore = useAlertStore();
             const { data, error } = await getMostRecentWinningBook();
 
             if (error) {
-                alertStore.newAlert('Could not fetch current book. Try refreshing the page.');
+                useAlertStore().newAlert('Could not fetch current book. Try refreshing the page.');
                 return;
             }
 
             this.currentlyReading = data[0]?.books;
         },
         async fetchBookList() {
-            const alertStore = useAlertStore();
             const { data, error } = await getActiveBooksWithProfiles();
 
             if (error) {
-                alertStore.newAlert('Could not fetch books. Try refreshing the page.');
+                useAlertStore().newAlert('Could not fetch books. Try refreshing the page.');
                 return;
             }
 
             this.books = data;
         },
         async archiveBook(id) {
-            const alertStore = useAlertStore();
             const book = this.books.find((book) => book.id === id);
             book.archiveLoading = true;
             const { error } = await archiveBook(id);
 
             if (error) {
                 book.archiveLoading = false;
-                alertStore.newAlert('Could not archive book. Try again.');
+                useAlertStore().newAlert('Could not archive book. Try again.');
                 return;
             }
 
             await archiveVotesByBookId(id);
         },
         async submitBook(book) {
-            const alertStore = useAlertStore();
             const { error } = await submitBook(book);
 
             if (error) {
-                alertStore.newAlert('Could not submit book. Try again.');
-                return;
+                useAlertStore().newAlert('Could not submit book. Try again.');
             }
         },
         async updateUserVotes(votes) {
@@ -79,13 +74,12 @@ export const useBooksStore = defineStore('books', {
             });
         },
         async updateGlobalVoteCounts() {
-            const alertStore = useAlertStore();
             const { data: globalVoteCounts, error } = await supabase.rpc(
                 'count_votes_group_by_book_id',
             );
 
             if (error) {
-                alertStore.newAlert();
+                useAlertStore().newAlert();
                 return;
             }
 
