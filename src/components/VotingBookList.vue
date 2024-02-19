@@ -43,13 +43,16 @@ import { storeToRefs } from 'pinia';
 import { computed, onBeforeUnmount, onMounted } from 'vue';
 import { supabase } from '../lib/supabase';
 import { useBooksStore } from '../stores/useBooksStore';
+import { useModalStore } from '../stores/useModalStore';
 import { useSessionStore } from '../stores/useSessionStore';
 import { useVotesStore } from '../stores/useVotesStore';
 import BookCard from './BookCard.vue';
+import VoteStartModal from './VoteStartModal.vue';
 
 const booksStore = useBooksStore();
 const votesStore = useVotesStore();
 const sessionStore = useSessionStore();
+const modalStore = useModalStore();
 
 const voteLimit = 3;
 let channel;
@@ -59,6 +62,7 @@ const books = computed(() => booksStore.booksSortedByUpdatedAt);
 const { userRole, userId } = storeToRefs(sessionStore);
 
 onMounted(async () => {
+    modalStore.open(VoteStartModal);
     await votesStore.fetchUserVotes();
     await booksStore.updateGlobalVoteCounts();
 
