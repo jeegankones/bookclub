@@ -2,8 +2,8 @@
     <div
         v-show="showChild"
         class="modal"
-        :class="{ 'modal-open': useModal.isOpen }"
-        @click.self="useModal.close()"
+        :class="{ 'modal-open': modalStore.isOpen }"
+        @click.self="modalStore.close()"
     >
         <Transition
             name="bounce"
@@ -13,29 +13,29 @@
             @after-leave="afterLeave()"
         >
             <div
-                v-if="useModal.isOpen"
+                v-if="modalStore.isOpen"
                 class="modal-box relative max-w-2xl"
             >
                 <label
                     class="btn btn-circle btn-sm absolute right-6 top-6"
-                    @click="useModal.close()"
+                    @click="modalStore.close()"
                     ><i class="fas fa-xmark"></i
                 ></label>
                 <component
-                    :is="useModal.view"
-                    v-if="useModal.model"
-                    v-model="useModal.model"
+                    :is="modalStore.view"
+                    v-if="modalStore.model"
+                    v-model="modalStore.model"
                 ></component>
                 <component
-                    :is="useModal.view"
-                    v-if="!useModal.model"
+                    :is="modalStore.view"
+                    v-if="!modalStore.model"
                 ></component>
                 <div
-                    v-if="useModal.actions.length"
+                    v-if="modalStore.actions.length"
                     class="modal-action"
                 >
                     <button
-                        v-for="(action, index) in useModal.actions"
+                        v-for="(action, index) in modalStore.actions"
                         :key="index"
                         class="btn"
                         @click="action.callback()"
@@ -50,17 +50,18 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useModalStore } from '../stores/useModalStore';
 
-import { useModal } from '../stores/useModal';
+const modalStore = useModalStore();
 
 const showChild = ref(false);
 
 function afterEnter() {
-    useModal.afterEnter = true;
+    modalStore.afterEnter = true;
 }
 
 function afterLeave() {
     showChild.value = false;
-    useModal.afterEnter = false;
+    modalStore.afterEnter = false;
 }
 </script>

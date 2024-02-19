@@ -12,7 +12,7 @@
 -   In the root directory, run the following command to install and use the correct version of Node.
 
 ```
-nvm use
+nvm install
 ```
 
 -   Install npm dependencies.
