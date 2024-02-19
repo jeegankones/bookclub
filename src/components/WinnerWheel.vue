@@ -18,14 +18,15 @@
 import * as d3 from 'd3';
 import seedrandom from 'seedrandom';
 import { computed, onMounted, ref, watch } from 'vue';
+import { useModalStore } from '../stores/useModalStore';
 
-import { useModal } from '../stores/useModal';
+const modalStore = useModalStore();
 
 const chartSvg = ref(null);
 const selectorSvg = ref(null);
 
 onMounted(() => {
-    if (useModal.afterEnter) {
+    if (modalStore.afterEnter) {
         renderChart();
         renderSelector();
         spinWheel();
@@ -34,7 +35,7 @@ onMounted(() => {
 
 // Watchers
 watch(
-    () => useModal.afterEnter,
+    () => modalStore.afterEnter,
     (value) => {
         if (value) {
             renderChart();
@@ -164,9 +165,9 @@ function shrinkText() {
 }
 
 function renderChart() {
-    const textRotation = (d) => {
+    function textRotation(d) {
         return ((d.startAngle / 2 + d.endAngle / 2 + Math.PI) * 180) / Math.PI;
-    };
+    }
 
     const color = d3.scaleOrdinal().range(d3.schemeSet2);
 

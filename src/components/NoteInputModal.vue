@@ -57,7 +57,6 @@
 
 <script setup>
 import { ref } from 'vue';
-
 import { formatDateYear } from '../utils/formatDateYear';
 
 defineProps({ modelValue: { type: Object, required: true } });

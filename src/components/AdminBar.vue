@@ -1,5 +1,5 @@
 <template>
-    <div class="container mx-auto px-2">
+    <div class="container mx-auto">
         <div class="card mx-auto max-w-7xl bg-base-200 shadow-lg">
             <div class="card-body p-4">
                 <h2 class="card-title mb-2">Admin</h2>
@@ -33,27 +33,30 @@
 
 <script setup>
 import { toRaw } from 'vue';
-
 import { supabase } from '../lib/supabase';
-import { useAlert } from '../stores/useAlert';
-import { useBookList } from '../stores/useBookList';
-import { useModal } from '../stores/useModal';
+import { useAlertStore } from '../stores/useAlertStore';
+import { useBooksStore } from '../stores/useBooksStore';
+import { useModalStore } from '../stores/useModalStore';
 import ConfirmPickWinnerModal from './ConfirmPickWinnerModal.vue';
 
 defineProps({ voting: Boolean });
 
+const modalStore = useModalStore();
+const alertStore = useAlertStore();
+const booksStore = useBooksStore();
+
 function confirmPickWinner() {
-    useModal.open(ConfirmPickWinnerModal, [
+    modalStore.open(ConfirmPickWinnerModal, [
         {
             label: 'No',
             callback() {
-                useModal.close();
+                modalStore.close();
             },
         },
         {
             label: 'Yes',
             async callback() {
-                useModal.close();
+                modalStore.close();
                 await pickWinner();
             },
         },
@@ -62,7 +65,7 @@ function confirmPickWinner() {
 
 async function pickWinner() {
     const picks = [];
-    const bookList = toRaw(useBookList.bookList);
+    const bookList = toRaw(booksStore.books);
     bookList.forEach((book) => {
         if (book.voteCount) {
             const numberOfPicks = Math.round(Math.pow(book.voteCount, 1.5));
@@ -72,7 +75,7 @@ async function pickWinner() {
         }
     });
     if (picks.length === 0) {
-        useAlert.newAlert('Could not pick a winner');
+        alertStore.newAlert('Could not pick a winner.');
         return;
     }
     const pick = picks[Math.floor(Math.random() * picks.length)];
