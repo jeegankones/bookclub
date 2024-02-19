@@ -18,7 +18,8 @@ export const useSettingsStore = defineStore('settings', {
             }
 
             const settings = data.reduce((object, row) => {
-                return (object[row.setting] = row.value);
+                object[row.setting] = row.value;
+                return object;
             }, {});
             this.voting = settings.voting;
         },
