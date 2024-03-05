@@ -3,27 +3,30 @@ import { markRaw } from 'vue';
 
 export const useModalStore = defineStore('modal', {
     state: () => ({
-        isOpen: false,
-        view: {},
-        actions: [],
-        model: null,
+        component: null,
+        props: {},
+        onModalClose: null,
         afterEnter: false,
     }),
     actions: {
-        open(view, actions = [], model = null) {
-            if (this.isOpen) {
+        open(component, config) {
+            if (this.component) {
                 this.close();
             }
-            this.view = markRaw(view);
-            this.actions = actions;
-            this.model = model;
-            this.isOpen = true;
+
+            this.component = markRaw(component);
+
+            if (config) {
+                const { props, onModalClose } = config;
+                this.props = props;
+                this.onModalClose = onModalClose;
+            }
         },
         close() {
-            this.isOpen = false;
-            this.view = {};
-            this.actions = [];
-            this.model = null;
+            if (typeof this.onModalClose === 'function') {
+                this.onModalClose();
+            }
+            this.$reset();
         },
     },
 });

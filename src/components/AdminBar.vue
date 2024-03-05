@@ -46,21 +46,23 @@ const alertStore = useAlertStore();
 const booksStore = useBooksStore();
 
 function confirmPickWinner() {
-    modalStore.open(ConfirmPickWinnerModal, [
-        {
-            label: 'No',
-            callback() {
-                modalStore.close();
+    modalStore.open(ConfirmPickWinnerModal, {
+        actions: [
+            {
+                label: 'No',
+                callback() {
+                    modalStore.close();
+                },
             },
-        },
-        {
-            label: 'Yes',
-            async callback() {
-                modalStore.close();
-                await pickWinner();
+            {
+                label: 'Yes',
+                async callback() {
+                    modalStore.close();
+                    await pickWinner();
+                },
             },
-        },
-    ]);
+        ],
+    });
 }
 
 async function pickWinner() {
