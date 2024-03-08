@@ -1,8 +1,6 @@
 import { defineStore } from 'pinia';
 import { getSettings } from '../api/settings';
-import VotingStartModal from '../components/VoteStartModal.vue';
 import { useAlertStore } from './useAlertStore';
-import { useModalStore } from './useModalStore';
 
 export const useSettingsStore = defineStore('settings', {
     state: () => ({
@@ -25,10 +23,6 @@ export const useSettingsStore = defineStore('settings', {
         },
         updateVoting(value) {
             this.voting = value;
-
-            if (value) {
-                useModalStore().open(VotingStartModal);
-            }
         },
     },
 });

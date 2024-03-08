@@ -62,7 +62,7 @@ const books = computed(() => booksStore.booksSortedByUpdatedAt);
 const { userRole, userId } = storeToRefs(sessionStore);
 
 onMounted(async () => {
-    modalStore.open(VoteStartModal);
+    modalStore.open(VoteStartModal, { hasOkButton: true });
     await votesStore.fetchUserVotes();
     await booksStore.updateGlobalVoteCounts();
 

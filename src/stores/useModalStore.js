@@ -1,32 +1,53 @@
 import { defineStore } from 'pinia';
-import { markRaw } from 'vue';
+import { markRaw, nextTick } from 'vue';
 
 export const useModalStore = defineStore('modal', {
     state: () => ({
         component: null,
-        props: {},
-        onModalClose: null,
+        config: {
+            componentProps: null,
+            hasOkButton: false,
+            hasCancelButton: false,
+            okButtonText: 'Ok',
+            cancelButtonText: 'Cancel',
+            okButtonCallback: null,
+            cancelButtonCallback: null,
+            onModalClose: null,
+        },
         afterEnter: false,
     }),
+    getters: {
+        componentProps: (state) => state.config.componentProps,
+        hasOkButton: (state) => state.config.hasOkButton,
+        hasCancelButton: (state) => state.config.hasCancelButton,
+        okButtonText: (state) => state.config.okButtonText,
+        cancelButtonText: (state) => state.config.cancelButtonText,
+        okButtonCallback() {
+            return this.config.okButtonCallback ?? this.close;
+        },
+        cancelButtonCallback() {
+            return this.config.cancelButtonCallback ?? this.close;
+        },
+        onModalClose: (state) => state.config.onModalClose,
+    },
     actions: {
-        open(component, config) {
+        async open(component, config = {}) {
             if (this.component) {
-                this.close();
+                await this.close();
             }
 
             this.component = markRaw(component);
-
-            if (config) {
-                const { props, onModalClose } = config;
-                this.props = props;
-                this.onModalClose = onModalClose;
-            }
+            this.config = {
+                ...this.config,
+                ...config,
+            };
         },
-        close() {
+        async close() {
             if (typeof this.onModalClose === 'function') {
                 this.onModalClose();
             }
             this.$reset();
+            await nextTick();
         },
     },
 });

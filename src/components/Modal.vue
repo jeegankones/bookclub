@@ -3,7 +3,7 @@
         <div
             v-show="showChild"
             class="modal z-40"
-            :class="{ 'modal-open': modalStore.component }"
+            :class="{ 'modal-open': component }"
             @click.self="modalStore.close()"
         >
             <Transition
@@ -14,7 +14,7 @@
                 @after-leave="afterLeave()"
             >
                 <div
-                    v-if="modalStore.component"
+                    v-if="component"
                     class="modal-box relative max-w-2xl"
                 >
                     <label
@@ -23,20 +23,26 @@
                         ><i class="fas fa-xmark"></i
                     ></label>
                     <component
-                        :is="modalStore.component"
-                        v-bind="modalStore.props"
+                        :is="component"
+                        v-bind="componentProps"
                     ></component>
                     <div
-                        v-if="modalStore.actions?.length"
+                        v-if="hasOkButton || hasCancelButton"
                         class="modal-action"
                     >
                         <button
-                            v-for="(action, index) in modalStore.actions"
-                            :key="index"
-                            class="btn"
-                            @click="action.callback()"
+                            v-if="hasCancelButton"
+                            class="btn btn-ghost"
+                            @click="cancelButtonCallback()"
                         >
-                            {{ action.label }}
+                            {{ cancelButtonText }}
+                        </button>
+                        <button
+                            v-if="hasOkButton"
+                            class="btn"
+                            @click="okButtonCallback()"
+                        >
+                            {{ okButtonText }}
                         </button>
                     </div>
                 </div>
@@ -46,10 +52,21 @@
 </template>
 
 <script setup>
+import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
 import { useModalStore } from '../stores/useModalStore';
 
 const modalStore = useModalStore();
+const {
+    component,
+    componentProps,
+    hasOkButton,
+    hasCancelButton,
+    okButtonText,
+    cancelButtonText,
+    okButtonCallback,
+    cancelButtonCallback,
+} = storeToRefs(modalStore);
 
 const showChild = ref(false);
 

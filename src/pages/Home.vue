@@ -78,7 +78,7 @@ onMounted(async () => {
             async () => {
                 const bookList = toRaw(booksStore.books);
                 await booksStore.fetchCurrentlyReading();
-                modalStore.open(WinningBookModal, undefined, bookList);
+                modalStore.open(WinningBookModal, { componentProps: { bookList } });
                 await supabase.from('books').update({ archived: true }).eq('archived', false);
                 await supabase.from('votes').update({ archived: true }).eq('archived', false);
             },

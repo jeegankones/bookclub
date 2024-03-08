@@ -44,7 +44,7 @@
     </div>
     <div class="modal-action">
         <button
-            class="btn"
+            class="btn btn-ghost"
             @click="modalStore.close()"
         >
             Cancel

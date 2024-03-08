@@ -108,7 +108,7 @@ function isButtonDisabled(result) {
 
 function openNoteInputModal(result) {
     modalStore.open(NoteInputModal, {
-        props: { book: result },
+        componentProps: { book: result },
         onModalClose: () => {
             bookInput.value.focus();
         },
