@@ -12,29 +12,31 @@
                 v-if="books.length > 0"
                 class="grid grid-cols-1 items-start gap-3 md:grid-cols-2"
             >
-                <BookCard
-                    v-for="book in books"
-                    :key="book.id"
-                    :book="book"
-                >
-                    <template #buttons>
-                        <button
-                            v-if="userRole === 'admin' || userId === book.submitted_by"
-                            class="btn btn-sm ml-auto"
-                            :disabled="book.archiveLoading"
-                            @click="booksStore.archiveBook(book.id)"
-                        >
-                            <Spinner
-                                v-if="book.archiveLoading"
-                                size="xs"
-                            />
-                            <i
-                                v-else
-                                class="far fa-trash-can"
-                            ></i>
-                        </button>
-                    </template>
-                </BookCard>
+                <TransitionGroup name="bounce">
+                    <BookCard
+                        v-for="book in books"
+                        :key="book.id"
+                        :book="book"
+                    >
+                        <template #buttons>
+                            <button
+                                v-if="userRole === 'admin' || userId === book.submitted_by"
+                                class="btn btn-sm ml-auto"
+                                :disabled="isArchiveLoading(book.id)"
+                                @click="booksStore.archiveBook(book.id)"
+                            >
+                                <Spinner
+                                    v-if="isArchiveLoading(book.id)"
+                                    size="xs"
+                                />
+                                <i
+                                    v-else
+                                    class="far fa-trash-can"
+                                ></i>
+                            </button>
+                        </template>
+                    </BookCard>
+                </TransitionGroup>
             </div>
             <div
                 v-else
@@ -59,4 +61,5 @@ const sessionStore = useSessionStore();
 
 const books = computed(() => booksStore.booksSortedByUpdatedAt);
 const { userRole, userId } = storeToRefs(sessionStore);
+const { isArchiveLoading } = storeToRefs(booksStore);
 </script>

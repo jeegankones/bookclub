@@ -53,7 +53,7 @@ const settingsStore = useSettingsStore();
 const sessionStore = useSessionStore();
 
 const voting = computed(() => settingsStore.voting);
-const { userRole, isLoggedIn } = storeToRefs(sessionStore);
+const { userRole, isLoggedIn, userId } = storeToRefs(sessionStore);
 
 onMounted(async () => {
     loading.value = true;
@@ -78,7 +78,7 @@ onMounted(async () => {
             async () => {
                 const bookList = toRaw(booksStore.books);
                 await booksStore.fetchCurrentlyReading();
-                modalStore.open(WinningBookModal, undefined, bookList);
+                modalStore.open(WinningBookModal, { componentProps: { bookList } });
                 await supabase.from('books').update({ archived: true }).eq('archived', false);
                 await supabase.from('votes').update({ archived: true }).eq('archived', false);
             },
@@ -86,12 +86,20 @@ onMounted(async () => {
         .on(
             'postgres_changes',
             { event: 'INSERT', schema: 'public', table: 'books' },
-            booksStore.fetchBookList,
+            (payload) => {
+                if (payload.new.submitted_by !== userId) {
+                    booksStore.fetchBookList();
+                }
+            },
         )
         .on(
             'postgres_changes',
             { event: 'UPDATE', schema: 'public', table: 'books' },
-            booksStore.fetchBookList,
+            (payload) => {
+                if (payload.new.submitted_by !== userId) {
+                    booksStore.fetchBookList();
+                }
+            },
         )
         .subscribe();
     loading.value = false;

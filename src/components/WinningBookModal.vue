@@ -2,7 +2,7 @@
     <h2 class="mb-4 font-bold">And the winner is...</h2>
     <WinnerWheel
         v-if="showWheel && currentlyReading"
-        :book-data="modelValue"
+        :book-data="bookList"
         :winning-book="currentlyReading"
         @close="showWheel = false"
     />
@@ -40,7 +40,7 @@ const booksStore = useBooksStore();
 
 // Props
 defineProps({
-    modelValue: { type: Array, required: true },
+    bookList: { type: Array, required: true },
 });
 
 // Data

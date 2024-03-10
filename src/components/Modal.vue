@@ -1,58 +1,72 @@
 <template>
-    <div
-        v-show="showChild"
-        class="modal"
-        :class="{ 'modal-open': modalStore.isOpen }"
-        @click.self="modalStore.close()"
-    >
-        <Transition
-            name="bounce"
-            mode="out-in"
-            @enter="showChild = true"
-            @after-enter="afterEnter()"
-            @after-leave="afterLeave()"
+    <Teleport to="body">
+        <div
+            v-show="showChild"
+            class="modal z-40"
+            :class="{ 'modal-open': component }"
+            @click.self="modalStore.close()"
         >
-            <div
-                v-if="modalStore.isOpen"
-                class="modal-box relative max-w-2xl"
+            <Transition
+                name="bounce"
+                mode="out-in"
+                @enter="showChild = true"
+                @after-enter="afterEnter()"
+                @after-leave="afterLeave()"
             >
-                <label
-                    class="btn btn-circle btn-sm absolute right-6 top-6"
-                    @click="modalStore.close()"
-                    ><i class="fas fa-xmark"></i
-                ></label>
-                <component
-                    :is="modalStore.view"
-                    v-if="modalStore.model"
-                    v-model="modalStore.model"
-                ></component>
-                <component
-                    :is="modalStore.view"
-                    v-if="!modalStore.model"
-                ></component>
                 <div
-                    v-if="modalStore.actions.length"
-                    class="modal-action"
+                    v-if="component"
+                    class="modal-box relative max-w-2xl"
                 >
-                    <button
-                        v-for="(action, index) in modalStore.actions"
-                        :key="index"
-                        class="btn"
-                        @click="action.callback()"
+                    <label
+                        class="btn btn-circle btn-sm absolute right-6 top-6"
+                        @click="modalStore.close()"
+                        ><i class="fas fa-xmark"></i
+                    ></label>
+                    <component
+                        :is="component"
+                        v-bind="componentProps"
+                    ></component>
+                    <div
+                        v-if="hasOkButton || hasCancelButton"
+                        class="modal-action"
                     >
-                        {{ action.label }}
-                    </button>
+                        <button
+                            v-if="hasCancelButton"
+                            class="btn btn-ghost"
+                            @click="cancelButtonCallback()"
+                        >
+                            {{ cancelButtonText }}
+                        </button>
+                        <button
+                            v-if="hasOkButton"
+                            class="btn"
+                            @click="okButtonCallback()"
+                        >
+                            {{ okButtonText }}
+                        </button>
+                    </div>
                 </div>
-            </div>
-        </Transition>
-    </div>
+            </Transition>
+        </div>
+    </Teleport>
 </template>
 
 <script setup>
+import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
 import { useModalStore } from '../stores/useModalStore';
 
 const modalStore = useModalStore();
+const {
+    component,
+    componentProps,
+    hasOkButton,
+    hasCancelButton,
+    okButtonText,
+    cancelButtonText,
+    okButtonCallback,
+    cancelButtonCallback,
+} = storeToRefs(modalStore);
 
 const showChild = ref(false);
 

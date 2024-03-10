@@ -57,7 +57,7 @@
                                 @click="openNoteInputModal(result)"
                             >
                                 <Spinner
-                                    v-if="result.loading"
+                                    v-if="isSubmitLoading(result.id)"
                                     size="xs"
                                 />
                                 <i
@@ -80,6 +80,7 @@
 
 <script setup>
 import _debounce from 'lodash/debounce';
+import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
 import { fetchGoogleBooksResults } from '../api/googleBooks';
 import { useBooksStore } from '../stores/useBooksStore';
@@ -95,42 +96,23 @@ const results = ref([]);
 const modalStore = useModalStore();
 const booksStore = useBooksStore();
 
-function isButtonDisabled(book) {
+const { isSubmitLoading, bookIds, currentlyReading } = storeToRefs(booksStore);
+
+function isButtonDisabled(result) {
     return (
-        book.loading ||
-        booksStore.bookIds.includes(book.id) ||
-        booksStore.currentlyReading?.google_id === book.id
+        isSubmitLoading.value(result.id) ||
+        bookIds.value.includes(result.id) ||
+        currentlyReading.value?.google_id === result.id
     );
 }
 
-function openNoteInputModal(book) {
-    modalStore.open(
-        NoteInputModal,
-        [
-            {
-                label: 'Cancel',
-                callback() {
-                    modalStore.close();
-                },
-            },
-            {
-                label: 'Submit',
-                callback() {
-                    submitBook(modalStore.model);
-                    modalStore.close();
-                },
-            },
-        ],
-        book,
-    );
-}
-
-async function submitBook(book) {
-    bookInput.value.focus();
-    const result = results.value.find((result) => result.id === book.id);
-    result.loading = true;
-    await booksStore.submitBook(book);
-    result.loading = false;
+function openNoteInputModal(result) {
+    modalStore.open(NoteInputModal, {
+        componentProps: { book: result },
+        onModalClose: () => {
+            bookInput.value.focus();
+        },
+    });
 }
 
 const searchBooks = _debounce(async (input) => {

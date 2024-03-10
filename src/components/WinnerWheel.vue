@@ -16,17 +16,19 @@
 
 <script setup>
 import * as d3 from 'd3';
+import { storeToRefs } from 'pinia';
 import seedrandom from 'seedrandom';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useModalStore } from '../stores/useModalStore';
 
 const modalStore = useModalStore();
+const { afterEnter } = storeToRefs(modalStore);
 
 const chartSvg = ref(null);
 const selectorSvg = ref(null);
 
 onMounted(() => {
-    if (modalStore.afterEnter) {
+    if (afterEnter.value) {
         renderChart();
         renderSelector();
         spinWheel();
@@ -34,16 +36,13 @@ onMounted(() => {
 });
 
 // Watchers
-watch(
-    () => modalStore.afterEnter,
-    (value) => {
-        if (value) {
-            renderChart();
-            renderSelector();
-            spinWheel();
-        }
-    },
-);
+watch(afterEnter, (value) => {
+    if (value) {
+        renderChart();
+        renderSelector();
+        spinWheel();
+    }
+});
 
 // Props
 const props = defineProps({

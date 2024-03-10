@@ -7,14 +7,14 @@
                     <button
                         v-if="!voting"
                         class="btn btn-success mr-2"
-                        @click="setVoting(true)"
+                        @click="updateVoting(true)"
                     >
                         Start voting
                     </button>
                     <button
                         v-if="voting"
                         class="btn btn-error mr-2"
-                        @click="setVoting(false)"
+                        @click="updateVoting(false)"
                     >
                         Cancel voting
                     </button>
@@ -37,6 +37,7 @@ import { supabase } from '../lib/supabase';
 import { useAlertStore } from '../stores/useAlertStore';
 import { useBooksStore } from '../stores/useBooksStore';
 import { useModalStore } from '../stores/useModalStore';
+import { useSettingsStore } from '../stores/useSettingsStore';
 import ConfirmPickWinnerModal from './ConfirmPickWinnerModal.vue';
 
 defineProps({ voting: Boolean });
@@ -44,23 +45,14 @@ defineProps({ voting: Boolean });
 const modalStore = useModalStore();
 const alertStore = useAlertStore();
 const booksStore = useBooksStore();
+const { updateVoting } = useSettingsStore();
 
 function confirmPickWinner() {
-    modalStore.open(ConfirmPickWinnerModal, [
-        {
-            label: 'No',
-            callback() {
-                modalStore.close();
-            },
-        },
-        {
-            label: 'Yes',
-            async callback() {
-                modalStore.close();
-                await pickWinner();
-            },
-        },
-    ]);
+    modalStore.open(ConfirmPickWinnerModal, {
+        hasOkButton: true,
+        hasCancelButton: true,
+        okButtonCallback: pickWinner,
+    });
 }
 
 async function pickWinner() {
@@ -79,11 +71,7 @@ async function pickWinner() {
         return;
     }
     const pick = picks[Math.floor(Math.random() * picks.length)];
-    await setVoting(false);
+    updateVoting(false);
     await supabase.from('winning_books').insert({ book_id: pick.id });
-}
-
-async function setVoting(value) {
-    await supabase.from('settings').update({ value }).eq('setting', 'voting').select('value');
 }
 </script>
