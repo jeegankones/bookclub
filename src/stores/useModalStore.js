@@ -1,29 +1,53 @@
 import { defineStore } from 'pinia';
-import { markRaw } from 'vue';
+import { markRaw, nextTick } from 'vue';
 
 export const useModalStore = defineStore('modal', {
     state: () => ({
-        isOpen: false,
-        view: {},
-        actions: [],
-        model: null,
+        component: null,
+        config: {
+            componentProps: null,
+            hasOkButton: false,
+            hasCancelButton: false,
+            okButtonText: 'Ok',
+            cancelButtonText: 'Cancel',
+            okButtonCallback: null,
+            cancelButtonCallback: null,
+            onModalClose: null,
+        },
         afterEnter: false,
     }),
-    actions: {
-        open(view, actions = [], model = null) {
-            if (this.isOpen) {
-                this.close();
-            }
-            this.view = markRaw(view);
-            this.actions = actions;
-            this.model = model;
-            this.isOpen = true;
+    getters: {
+        componentProps: (state) => state.config.componentProps,
+        hasOkButton: (state) => state.config.hasOkButton,
+        hasCancelButton: (state) => state.config.hasCancelButton,
+        okButtonText: (state) => state.config.okButtonText,
+        cancelButtonText: (state) => state.config.cancelButtonText,
+        okButtonCallback() {
+            return this.config.okButtonCallback ?? this.close;
         },
-        close() {
-            this.isOpen = false;
-            this.view = {};
-            this.actions = [];
-            this.model = null;
+        cancelButtonCallback() {
+            return this.config.cancelButtonCallback ?? this.close;
+        },
+        onModalClose: (state) => state.config.onModalClose,
+    },
+    actions: {
+        async open(component, config = {}) {
+            if (this.component) {
+                await this.close();
+            }
+
+            this.component = markRaw(component);
+            this.config = {
+                ...this.config,
+                ...config,
+            };
+        },
+        async close() {
+            if (typeof this.onModalClose === 'function') {
+                this.onModalClose();
+            }
+            this.$reset();
+            await nextTick();
         },
     },
 });
