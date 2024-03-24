@@ -32,19 +32,15 @@
 </template>
 
 <script setup>
-import { toRaw } from 'vue';
-import { supabase } from '../lib/supabase';
-import { useAlertStore } from '../stores/useAlertStore';
-import { useBooksStore } from '../stores/useBooksStore';
 import { useModalStore } from '../stores/useModalStore';
 import { useSettingsStore } from '../stores/useSettingsStore';
+import { useVotesStore } from '../stores/useVotesStore';
 import ConfirmPickWinnerModal from './ConfirmPickWinnerModal.vue';
 
 defineProps({ voting: Boolean });
 
 const modalStore = useModalStore();
-const alertStore = useAlertStore();
-const booksStore = useBooksStore();
+const votesStore = useVotesStore();
 const { updateVoting } = useSettingsStore();
 
 function confirmPickWinner() {
@@ -56,22 +52,6 @@ function confirmPickWinner() {
 }
 
 async function pickWinner() {
-    const picks = [];
-    const bookList = toRaw(booksStore.books);
-    bookList.forEach((book) => {
-        if (book.voteCount) {
-            const numberOfPicks = Math.round(Math.pow(book.voteCount, 1.5));
-            for (let i = 0; i < numberOfPicks; i++) {
-                picks.push(book);
-            }
-        }
-    });
-    if (picks.length === 0) {
-        alertStore.newAlert('Could not pick a winner.');
-        return;
-    }
-    const pick = picks[Math.floor(Math.random() * picks.length)];
-    updateVoting(false);
-    await supabase.from('winning_books').insert({ book_id: pick.id });
+    await votesStore.getNewWinningBook();
 }
 </script>

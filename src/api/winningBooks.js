@@ -1,11 +1,16 @@
 import { supabase } from '../lib/supabase';
 
-function getMostRecentWinningBook() {
+function fetchMostRecentWinningBook() {
     return supabase
         .from('winning_books')
         .select(`books(*, profiles(id, full_name))`)
         .order('created_at', { ascending: false })
-        .limit(1);
+        .limit(1)
+        .single();
 }
 
-export { getMostRecentWinningBook };
+function insertWinningBook(bookId) {
+    return supabase.from('winning_books').insert({ book_id: bookId });
+}
+
+export { fetchMostRecentWinningBook, insertWinningBook };

@@ -79,7 +79,7 @@
 </template>
 
 <script setup>
-import _debounce from 'lodash/debounce';
+import debounce from 'lodash/debounce';
 import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
 import { fetchGoogleBooksResults } from '../api/googleBooks';
@@ -115,7 +115,7 @@ function openNoteInputModal(result) {
     });
 }
 
-const searchBooks = _debounce(async (input) => {
+const searchBooks = debounce(async (input) => {
     const query = input.trim().split(' ').join('+');
     if (query) {
         const response = await fetchGoogleBooksResults(query);

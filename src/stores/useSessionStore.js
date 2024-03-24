@@ -33,9 +33,10 @@ export const useSessionStore = defineStore('session', {
 
             if (error) {
                 useAlertStore().newAlert('Could not fetch user role. Try refreshing the page.');
+                return;
             }
 
-            this.userRole = data[0].role;
+            this.userRole = data.role;
         },
     },
 });

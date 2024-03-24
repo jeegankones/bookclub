@@ -11,7 +11,7 @@
                 v-if="userRole === 'admin'"
                 :voting="voting"
             />
-            <CurrentlyReading v-if="!voting && booksStore.currentlyReading" />
+            <CurrentlyReading v-if="isCurrentlyReadingVisible" />
             <BookInput v-if="!voting && isLoggedIn" />
             <VotingBookList v-if="voting && isLoggedIn" />
             <BookList v-else />
@@ -27,7 +27,7 @@
 
 <script setup>
 import { storeToRefs } from 'pinia';
-import { computed, onBeforeUnmount, onMounted, ref, toRaw } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import AdminBar from '../components/AdminBar.vue';
 import Alert from '../components/Alert.vue';
 import BookInput from '../components/BookInput.vue';
@@ -43,6 +43,7 @@ import { useBooksStore } from '../stores/useBooksStore';
 import { useModalStore } from '../stores/useModalStore';
 import { useSessionStore } from '../stores/useSessionStore';
 import { useSettingsStore } from '../stores/useSettingsStore';
+import { useVotesStore } from '../stores/useVotesStore';
 
 let channel;
 const loading = ref(null);
@@ -51,9 +52,12 @@ const modalStore = useModalStore();
 const booksStore = useBooksStore();
 const settingsStore = useSettingsStore();
 const sessionStore = useSessionStore();
+const votesStore = useVotesStore();
 
-const voting = computed(() => settingsStore.voting);
-const { userRole, isLoggedIn, userId } = storeToRefs(sessionStore);
+const { globalVoteCountByBookId } = storeToRefs(votesStore);
+const { books, currentlyReading } = storeToRefs(booksStore);
+const { voting } = storeToRefs(settingsStore);
+const { userRole, isLoggedIn } = storeToRefs(sessionStore);
 
 onMounted(async () => {
     loading.value = true;
@@ -76,31 +80,28 @@ onMounted(async () => {
             'postgres_changes',
             { event: 'INSERT', schema: 'public', table: 'winning_books' },
             async () => {
-                const bookList = toRaw(booksStore.books);
                 await booksStore.fetchCurrentlyReading();
-                modalStore.open(WinningBookModal, { componentProps: { bookList } });
-                await supabase.from('books').update({ archived: true }).eq('archived', false);
-                await supabase.from('votes').update({ archived: true }).eq('archived', false);
+                const archiveFn = async () => {
+                    await booksStore.archiveActiveBooks();
+                    await votesStore.archiveActiveVotes();
+                };
+                modalStore.open(WinningBookModal, {
+                    componentProps: {
+                        bookList: [...books.value],
+                        winningBook: currentlyReading,
+                        votesByBookId: { ...globalVoteCountByBookId.value },
+                    },
+                    fullSize: true,
+                    onModalClose: userRole.value === 'admin' && archiveFn,
+                });
             },
         )
-        .on(
-            'postgres_changes',
-            { event: 'INSERT', schema: 'public', table: 'books' },
-            (payload) => {
-                if (payload.new.submitted_by !== userId) {
-                    booksStore.fetchBookList();
-                }
-            },
-        )
-        .on(
-            'postgres_changes',
-            { event: 'UPDATE', schema: 'public', table: 'books' },
-            (payload) => {
-                if (payload.new.submitted_by !== userId) {
-                    booksStore.fetchBookList();
-                }
-            },
-        )
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'books' }, async () => {
+            await booksStore.fetchBookList();
+        })
+        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'books' }, async () => {
+            await booksStore.fetchBookList();
+        })
         .subscribe();
     loading.value = false;
 });
@@ -108,4 +109,8 @@ onMounted(async () => {
 onBeforeUnmount(async () => {
     await supabase.removeChannel(channel);
 });
+
+const isCurrentlyReadingVisible = computed(
+    () => !voting.value && modalStore.component !== WinningBookModal && booksStore.currentlyReading,
+);
 </script>

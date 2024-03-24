@@ -1,5 +1,5 @@
 <template>
-    <div class="card bg-base-100">
+    <div class="card overflow-hidden bg-base-100">
         <Transition
             v-if="voting"
             name="bounce"
@@ -74,7 +74,10 @@
                         Submitted by {{ book.profiles.full_name }}
                     </p>
                 </div>
-                <slot name="buttons"></slot>
+                <div class="ml-auto self-start">
+                    <slot name="buttons"></slot>
+                    <slot name="statistics"></slot>
+                </div>
             </div>
             <div
                 v-if="book.user_note && isLoggedIn"

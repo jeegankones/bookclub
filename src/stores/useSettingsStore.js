@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { getSettings } from '../api/settings';
+import { getSettings, updateSetting } from '../api/settings';
 import { useAlertStore } from './useAlertStore';
 
 export const useSettingsStore = defineStore('settings', {
@@ -21,8 +21,19 @@ export const useSettingsStore = defineStore('settings', {
             }, {});
             this.voting = settings.voting;
         },
-        updateVoting(value) {
-            this.voting = value;
+        async updateVoting(value) {
+            if (value === this.voting) {
+                return;
+            }
+
+            const { data, error } = await updateSetting('voting', value);
+
+            if (error) {
+                useAlertStore().newAlert('Could not update voting setting. Try again.');
+                return;
+            }
+
+            this.voting = data.find((row) => row.setting === 'voting')?.value;
         },
     },
 });

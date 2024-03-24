@@ -12,21 +12,22 @@ function fetchUserVotes(userId) {
     return supabase.from('votes').select('*').eq('archived', false).eq('profile_id', userId);
 }
 
-function insertVote(book, userId) {
-    return supabase.from('votes').insert({ book_id: book.id, profile_id: userId });
+function insertVotes(votes) {
+    return supabase.from('votes').insert(votes).select();
 }
 
-function deleteVote(book, userId) {
-    return supabase
-        .from('votes')
-        .delete()
-        .match({
-            archived: false,
-            book_id: book.id,
-            profile_id: userId,
-        })
-        .order('created_at')
-        .limit(1);
+function fetchGlobalVoteCount() {
+    return supabase.from('votes').select('book_id, weight').eq('archived', false);
 }
 
-export { archiveVotesByBookId, deleteVote, fetchUserVotes, insertVote };
+function archiveActiveVotes() {
+    return supabase.from('votes').update({ archived: true }).eq('archived', false);
+}
+
+export {
+    archiveActiveVotes,
+    archiveVotesByBookId,
+    fetchGlobalVoteCount,
+    fetchUserVotes,
+    insertVotes,
+};

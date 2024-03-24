@@ -13,6 +13,7 @@ export const useModalStore = defineStore('modal', {
             okButtonCallback: null,
             cancelButtonCallback: null,
             onModalClose: null,
+            fullSize: false,
         },
         afterEnter: false,
     }),
@@ -29,6 +30,7 @@ export const useModalStore = defineStore('modal', {
             return this.config.cancelButtonCallback ?? this.close;
         },
         onModalClose: (state) => state.config.onModalClose,
+        fullSize: (state) => state.config.fullSize,
     },
     actions: {
         async open(component, config = {}) {
@@ -44,8 +46,9 @@ export const useModalStore = defineStore('modal', {
         },
         async close() {
             if (typeof this.onModalClose === 'function') {
-                this.onModalClose();
+                await this.onModalClose();
             }
+
             this.$reset();
             await nextTick();
         },

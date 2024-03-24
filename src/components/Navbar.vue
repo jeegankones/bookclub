@@ -1,5 +1,5 @@
 <template>
-    <div class="navbar fixed top-0 z-50 bg-base-100 shadow-lg">
+    <div class="navbar fixed top-0 z-30 bg-base-100 shadow-lg">
         <div class="container mx-auto flex justify-between px-4 py-2">
             <h1 class="my-2 font-bold">Book Club</h1>
             <div v-if="isLoggedIn">
