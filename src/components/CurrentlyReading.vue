@@ -11,11 +11,11 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
-import { useBooksStore } from '../stores/useBooksStore';
+import { storeToRefs } from 'pinia';
+import { useWinningBooksStore } from '../stores/useWinningBooksStore';
 import BookCard from './BookCard.vue';
 
-const booksStore = useBooksStore();
+const winningBooksStore = useWinningBooksStore();
 
-const currentlyReading = computed(() => booksStore.currentlyReading);
+const { currentlyReading } = storeToRefs(winningBooksStore);
 </script>

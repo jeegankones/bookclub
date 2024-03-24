@@ -14,8 +14,14 @@ export const useSessionStore = defineStore('session', {
         userId: (state) => {
             return state.session?.user?.id;
         },
+        userName: (state) => {
+            return state.session?.user?.user_metadata.full_name;
+        },
         userAvatar: (state) => {
             return state.session?.user?.user_metadata.avatar_url;
+        },
+        userEmail: (state) => {
+            return state.session?.user?.email;
         },
     },
     actions: {

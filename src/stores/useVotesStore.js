@@ -8,9 +8,9 @@ import {
     insertVotes,
 } from '../api/votes';
 import { useAlertStore } from './useAlertStore';
-import { useBooksStore } from './useBooksStore';
 import { useSessionStore } from './useSessionStore';
 import { useSettingsStore } from './useSettingsStore';
+import { useWinningBooksStore } from './useWinningBooksStore';
 
 export const useVotesStore = defineStore('votes', {
     state: () => ({
@@ -105,7 +105,7 @@ export const useVotesStore = defineStore('votes', {
             this.globalVotes = data;
         },
         async getNewWinningBook() {
-            const booksStore = useBooksStore();
+            const winningBooksStore = useWinningBooksStore();
             const settingsStore = useSettingsStore();
 
             const picks = [];
@@ -124,7 +124,7 @@ export const useVotesStore = defineStore('votes', {
             }
 
             const winningBookId = picks[Math.floor(Math.random() * picks.length)];
-            await booksStore.addWinningBook(winningBookId);
+            await winningBooksStore.addWinningBook(winningBookId);
             await settingsStore.updateVoting(false);
         },
         async submitVotes() {

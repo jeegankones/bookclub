@@ -5,7 +5,7 @@ function getSettings() {
 }
 
 function updateSetting(setting, value) {
-    return supabase.from('settings').update({ value }).match({ setting }).select();
+    return supabase.from('settings').update({ value }).match({ setting });
 }
 
 export { getSettings, updateSetting };

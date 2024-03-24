@@ -44,18 +44,21 @@ import { useModalStore } from '../stores/useModalStore';
 import { useSessionStore } from '../stores/useSessionStore';
 import { useSettingsStore } from '../stores/useSettingsStore';
 import { useVotesStore } from '../stores/useVotesStore';
+import { useWinningBooksStore } from '../stores/useWinningBooksStore';
 
 let channel;
 const loading = ref(null);
 
 const modalStore = useModalStore();
 const booksStore = useBooksStore();
+const winningBooksStore = useWinningBooksStore();
 const settingsStore = useSettingsStore();
 const sessionStore = useSessionStore();
 const votesStore = useVotesStore();
 
 const { globalVoteCountByBookId } = storeToRefs(votesStore);
-const { books, currentlyReading } = storeToRefs(booksStore);
+const { books } = storeToRefs(booksStore);
+const { currentlyReading } = storeToRefs(winningBooksStore);
 const { voting } = storeToRefs(settingsStore);
 const { userRole, isLoggedIn } = storeToRefs(sessionStore);
 
@@ -63,27 +66,29 @@ onMounted(async () => {
     loading.value = true;
     await settingsStore.fetchSettings();
     await booksStore.fetchBookList();
-    await booksStore.fetchCurrentlyReading();
+    await winningBooksStore.fetchCurrentlyReading();
 
     channel = supabase
         .channel('home-channel')
         .on(
             'postgres_changes',
             { event: 'UPDATE', schema: 'public', table: 'settings' },
-            (payload) => {
-                if (payload.new.setting === 'voting') {
-                    settingsStore.updateVoting(payload.new.value);
-                }
+            async () => {
+                await settingsStore.fetchSettings();
             },
         )
         .on(
             'postgres_changes',
             { event: 'INSERT', schema: 'public', table: 'winning_books' },
             async () => {
-                await booksStore.fetchCurrentlyReading();
-                const archiveFn = async () => {
+                await winningBooksStore.fetchCurrentlyReading();
+                const archiveAll = async () => {
                     await booksStore.archiveActiveBooks();
                     await votesStore.archiveActiveVotes();
+                };
+                const archiveLocal = async () => {
+                    await booksStore.$reset();
+                    await votesStore.$reset();
                 };
                 modalStore.open(WinningBookModal, {
                     componentProps: {
@@ -92,7 +97,7 @@ onMounted(async () => {
                         votesByBookId: { ...globalVoteCountByBookId.value },
                     },
                     fullSize: true,
-                    onModalClose: userRole.value === 'admin' && archiveFn,
+                    onModalClose: userRole.value === 'admin' ? archiveAll : archiveLocal,
                 });
             },
         )
@@ -111,6 +116,6 @@ onBeforeUnmount(async () => {
 });
 
 const isCurrentlyReadingVisible = computed(
-    () => !voting.value && modalStore.component !== WinningBookModal && booksStore.currentlyReading,
+    () => !voting.value && modalStore.component !== WinningBookModal && currentlyReading.value,
 );
 </script>

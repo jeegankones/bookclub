@@ -6,7 +6,6 @@ import {
     submitBook,
 } from '../api/books';
 import { archiveVotesByBookId } from '../api/votes';
-import { fetchMostRecentWinningBook, insertWinningBook } from '../api/winningBooks';
 import { useAlertStore } from '../stores/useAlertStore';
 import { useModalStore } from './useModalStore';
 import { useSessionStore } from './useSessionStore';
@@ -14,7 +13,6 @@ import { useSessionStore } from './useSessionStore';
 export const useBooksStore = defineStore('books', {
     state: () => ({
         books: [],
-        currentlyReading: null,
         loadingStates: {},
     }),
     getters: {
@@ -32,24 +30,6 @@ export const useBooksStore = defineStore('books', {
         },
     },
     actions: {
-        async fetchCurrentlyReading() {
-            const { data, error } = await fetchMostRecentWinningBook();
-
-            if (error) {
-                useAlertStore().newAlert('Could not fetch current book. Try refreshing the page.');
-                return;
-            }
-
-            this.currentlyReading = data.books;
-        },
-        async addWinningBook(bookId) {
-            const { error } = await insertWinningBook(bookId);
-
-            if (error) {
-                useAlertStore().newAlert('Could not add winning book. Try again.');
-                return;
-            }
-        },
         async fetchBookList() {
             const { data, error } = await getActiveBooksWithProfiles();
 
@@ -101,6 +81,5 @@ export const useBooksStore = defineStore('books', {
     },
     debounce: {
         fetchBookList: [250, { leading: true, trailing: false }],
-        fetchCurrentlyReading: [250, { leading: true, trailing: false }],
     },
 });

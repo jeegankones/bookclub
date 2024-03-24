@@ -49,7 +49,7 @@
                     voting
                 >
                     <template
-                        v-if="canVote(book)"
+                        v-if="getStepByBookId(book.id) || canVote(book)"
                         #buttons
                     >
                         <div
@@ -60,7 +60,7 @@
                             {{ getStepByBookId(book.id).emoji }}
                         </div>
                         <button
-                            v-else-if="!areVotesSubmitted && voteStep"
+                            v-else-if="canVote(book)"
                             class="btn text-3xl sm:btn-lg sm:text-3xl"
                             :aria-label="`select ${voteStep.label}`"
                             @click="votesStore.insertVote(book, voteStep.weight)"
@@ -79,7 +79,7 @@
                         />
                         <div class="px-2 text-center">
                             {{ getPercentOfTotal(book.id) }}%
-                            <div class="text-sm text-gray-400">of votes</div>
+                            <div class="text-sm text-gray-400">of&nbsp;votes</div>
                         </div>
                     </template>
                 </BookCard>
@@ -187,6 +187,9 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(async () => {
+    if (modalStore.component === VoteStartModal) {
+        await modalStore.close();
+    }
     await supabase.removeChannel(channel);
 });
 
@@ -211,6 +214,10 @@ function getStepByBookId(id) {
 }
 
 function canVote(book) {
-    return userRole === 'admin' || userId !== book.submitted_by;
+    return (
+        !areVotesSubmitted.value &&
+        voteStep.value &&
+        (userRole === 'admin' || userId !== book.submitted_by)
+    );
 }
 </script>

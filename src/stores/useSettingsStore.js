@@ -22,18 +22,15 @@ export const useSettingsStore = defineStore('settings', {
             this.voting = settings.voting;
         },
         async updateVoting(value) {
-            if (value === this.voting) {
-                return;
-            }
-
-            const { data, error } = await updateSetting('voting', value);
+            const { error } = await updateSetting('voting', value);
 
             if (error) {
                 useAlertStore().newAlert('Could not update voting setting. Try again.');
                 return;
             }
-
-            this.voting = data.find((row) => row.setting === 'voting')?.value;
         },
+    },
+    debounce: {
+        fetchSettings: [250, { leading: true, trailing: false }],
     },
 });
