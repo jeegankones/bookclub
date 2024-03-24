@@ -15,7 +15,7 @@ export const useWinningBooksStore = defineStore('winningBooks', {
                 return;
             }
 
-            this.currentlyReading = data.books;
+            this.currentlyReading = data[0]?.books;
         },
         async addWinningBook(bookId) {
             const { error } = await insertWinningBook(bookId);

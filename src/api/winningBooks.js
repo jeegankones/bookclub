@@ -5,8 +5,7 @@ function fetchMostRecentWinningBook() {
         .from('winning_books')
         .select(`books(*, profiles(id, full_name))`)
         .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
+        .limit(1);
 }
 
 function insertWinningBook(bookId) {
