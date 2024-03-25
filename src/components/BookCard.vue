@@ -1,5 +1,5 @@
 <template>
-    <div class="card overflow-hidden bg-base-100">
+    <div class="card bg-base-100">
         <Transition
             v-if="voting"
             name="bounce"

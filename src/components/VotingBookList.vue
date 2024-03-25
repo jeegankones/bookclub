@@ -187,7 +187,7 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(async () => {
-    if (modalStore.component === VoteStartModal) {
+    if ([VoteStartModal, SubmitVoteModal].includes(modalStore.component)) {
         await modalStore.close();
     }
     await supabase.removeChannel(channel);
@@ -217,7 +217,7 @@ function canVote(book) {
     return (
         !areVotesSubmitted.value &&
         voteStep.value &&
-        (userRole === 'admin' || userId !== book.submitted_by)
+        (userRole.value === 'admin' || userId.value !== book.submitted_by)
     );
 }
 </script>
