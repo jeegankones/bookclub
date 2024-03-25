@@ -16,7 +16,7 @@
             :class="{ 'md:p-6': size === 'lg' }"
         >
             <div
-                class="flex flex-row items-center gap-4"
+                class="flex items-center gap-4"
                 :class="{ 'md:gap-8': size === 'lg' }"
             >
                 <div
@@ -74,7 +74,13 @@
                         Submitted by {{ book.profiles.full_name }}
                     </p>
                 </div>
-                <slot name="buttons"></slot>
+                <div
+                    class="ml-auto"
+                    :class="{ 'self-start': $slots.buttons }"
+                >
+                    <slot name="buttons"></slot>
+                    <slot name="statistics"></slot>
+                </div>
             </div>
             <div
                 v-if="book.user_note && isLoggedIn"

@@ -12,7 +12,7 @@ module.exports = {
         'plugin:prettier/recommended',
     ],
     rules: {
-        'func-style': ['error', 'declaration'],
+        'func-style': ['error', 'declaration', { allowArrowFunctions: true }],
         'prettier/prettier': 'warn',
         'simple-import-sort/imports': [
             'error',
@@ -20,6 +20,7 @@ module.exports = {
         ],
         'simple-import-sort/exports': 'error',
         'vue/multi-word-component-names': 'off',
+        'vue/static-class-names-order': 'off',
         'tailwindcss/no-custom-classname': 'off',
     },
 };

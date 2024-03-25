@@ -1,10 +1,9 @@
 <template>
-    <div class="flex items-center justify-center overflow-hidden">
+    <div class="relative mx-auto inline-flex items-center justify-center overflow-hidden">
         <svg
             ref="selectorSvg"
             class="absolute z-10 overflow-visible"
-            :width="selectorDiameter"
-            :height="selectorDiameter"
+            width="10%"
         ></svg>
         <svg
             ref="chartSvg"
@@ -18,7 +17,7 @@
 import * as d3 from 'd3';
 import { storeToRefs } from 'pinia';
 import seedrandom from 'seedrandom';
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import { useModalStore } from '../stores/useModalStore';
 
 const modalStore = useModalStore();
@@ -27,41 +26,34 @@ const { afterEnter } = storeToRefs(modalStore);
 const chartSvg = ref(null);
 const selectorSvg = ref(null);
 
-onMounted(() => {
-    if (afterEnter.value) {
-        renderChart();
-        renderSelector();
-        spinWheel();
-    }
-});
+watch(
+    afterEnter,
+    async (value) => {
+        if (value) {
+            await nextTick();
+            renderChart();
+            renderSelector();
+            spinWheel();
+        }
+    },
+    { immediate: true },
+);
 
-// Watchers
-watch(afterEnter, (value) => {
-    if (value) {
-        renderChart();
-        renderSelector();
-        spinWheel();
-    }
-});
-
-// Props
 const props = defineProps({
-    bookData: { type: Array, required: true },
+    bookList: { type: Array, required: true },
     winningBook: { type: Object, required: true },
+    votesByBookId: { type: Object, required: true },
 });
 
-// Data
-const diameter = 500;
-const selectorDiameter = 60;
+const diameter = 800;
+const selectorDiameter = diameter / 10;
 const textWidth = diameter / 2 - 100;
 
-// Computed
 const pieData = computed(() => {
-    const pie = d3.pie().value((d) => d.voteCount);
-    return pie(props.bookData.filter((book) => book.voteCount > 0));
+    const pie = d3.pie().value((d) => props.votesByBookId[d.id]);
+    return pie(props.bookList.filter((book) => props.votesByBookId[book.id]));
 });
 
-// Emits
 const emit = defineEmits(['close']);
 
 function spinWheel() {
@@ -117,9 +109,9 @@ function renderSelector() {
             d3
                 .symbol()
                 .type(d3.symbolTriangle)
-                .size(selectorDiameter * 20),
+                .size(selectorDiameter * 28),
         )
-        .attr('transform', 'translate(12,0) rotate(90)')
+        .attr('transform', `translate(${selectorDiameter / 2},0) rotate(90)`)
         .style('fill', 'white');
 }
 
@@ -153,7 +145,7 @@ function shrinkText() {
     let width = text.node().getComputedTextLength();
     let fontSizeEm = 2;
     while (width > textWidth) {
-        if (fontSizeEm <= 1) {
+        if (fontSizeEm <= 1.5) {
             wrapText(text);
             return;
         }

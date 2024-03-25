@@ -39,4 +39,8 @@ function submitBook(book, userId) {
     );
 }
 
-export { archiveBook, getActiveBooksWithProfiles, submitBook };
+function archiveActiveBooks() {
+    return supabase.from('books').update({ archived: true }).eq('archived', false);
+}
+
+export { archiveActiveBooks, archiveBook, getActiveBooksWithProfiles, submitBook };

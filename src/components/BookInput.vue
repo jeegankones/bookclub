@@ -3,11 +3,11 @@
         <div class="card-body p-4">
             <h2 class="card-title mb-2">Submit a book</h2>
             <input
-                ref="bookInput"
+                ref="bookElement"
+                v-model="bookInput"
                 type="search"
                 placeholder="Search"
                 class="input w-full"
-                @input="handleInput($event.target.value)"
             />
             <ul>
                 <li
@@ -79,24 +79,36 @@
 </template>
 
 <script setup>
-import _debounce from 'lodash/debounce';
+import debounce from 'lodash/debounce';
 import { storeToRefs } from 'pinia';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { fetchGoogleBooksResults } from '../api/googleBooks';
 import { useBooksStore } from '../stores/useBooksStore';
 import { useModalStore } from '../stores/useModalStore';
+import { useWinningBooksStore } from '../stores/useWinningBooksStore';
 import { formatDateYear } from '../utils/formatDateYear';
 import Collapse from './Collapse.vue';
 import NoteInputModal from './NoteInputModal.vue';
 import Spinner from './Spinner.vue';
 
+const bookElement = ref(null);
 const bookInput = ref(null);
 const results = ref([]);
 
 const modalStore = useModalStore();
 const booksStore = useBooksStore();
+const winningBooksStore = useWinningBooksStore();
 
-const { isSubmitLoading, bookIds, currentlyReading } = storeToRefs(booksStore);
+const { isSubmitLoading, bookIds } = storeToRefs(booksStore);
+const { currentlyReading } = storeToRefs(winningBooksStore);
+
+watch(bookInput, (input) => {
+    if (!input) {
+        results.value = [];
+    }
+
+    searchBooks(input);
+});
 
 function isButtonDisabled(result) {
     return (
@@ -110,24 +122,17 @@ function openNoteInputModal(result) {
     modalStore.open(NoteInputModal, {
         componentProps: { book: result },
         onModalClose: () => {
-            bookInput.value.focus();
+            bookInput.value = '';
+            bookElement.value.focus();
         },
     });
 }
 
-const searchBooks = _debounce(async (input) => {
+const searchBooks = debounce(async (input) => {
     const query = input.trim().split(' ').join('+');
     if (query) {
         const response = await fetchGoogleBooksResults(query);
         results.value = response.data.items;
     }
 }, 500);
-
-function handleInput(input) {
-    if (!input) {
-        results.value = [];
-    }
-
-    searchBooks(input);
-}
 </script>
