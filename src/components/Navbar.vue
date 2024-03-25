@@ -1,25 +1,43 @@
 <template>
-    <div class="navbar fixed top-0 z-50 bg-base-100 shadow-lg">
+    <div class="navbar fixed top-0 z-30 bg-base-100 shadow-lg">
         <div class="container mx-auto flex justify-between px-4 py-2">
             <h1 class="my-2 font-bold">Book Club</h1>
             <div v-if="isLoggedIn">
                 <div class="dropdown-end dropdown">
                     <label tabindex="0">
-                        <div class="avatar">
-                            <div class="w-12 rounded-full">
+                        <button
+                            v-if="userAvatar"
+                            :title="userName"
+                            class="avatar"
+                        >
+                            <div class="flex w-12 rounded-full">
                                 <img :src="userAvatar" />
                             </div>
-                        </div>
+                        </button>
+                        <button
+                            v-else
+                            class="btn btn-neutral"
+                            :title="userEmail"
+                        >
+                            {{ userEmail }}
+                        </button>
                     </label>
                     <div
                         tabindex="0"
-                        class="dropdown-content rounded-box bg-base-100 shadow"
+                        class="dropdown-content rounded-box w-52 bg-base-100 p-2 shadow-lg"
                     >
                         <button
-                            class="btn w-40"
+                            class="btn w-full"
                             @click="signout"
                         >
                             Sign out
+                        </button>
+                        <button
+                            v-if="userRole === 'admin'"
+                            class="btn mt-2 w-full"
+                            @click="adminSignIn"
+                        >
+                            Admin sign in
                         </button>
                     </div>
                 </div>
@@ -40,24 +58,31 @@
 import { storeToRefs } from 'pinia';
 import { supabase } from '../lib/supabase';
 import { useAlertStore } from '../stores/useAlertStore';
+import { useModalStore } from '../stores/useModalStore';
 import { useSessionStore } from '../stores/useSessionStore';
+import AdminSignInModal from './AdminSignInModal.vue';
 
 const alertStore = useAlertStore();
 const sessionStore = useSessionStore();
+const modalStore = useModalStore();
 
-const { userAvatar, isLoggedIn } = storeToRefs(sessionStore);
+const { userAvatar, isLoggedIn, userRole, userEmail, userName } = storeToRefs(sessionStore);
 
 async function signInWithDiscord() {
     const { error } = await supabase.auth.signInWithOAuth({
         provider: 'discord',
         options: {
-            redirectTo: import.meta.env.VITE_APP_SUPABASE_REDIRECT_URL,
+            redirectTo: import.meta.env.BASE_URL,
         },
     });
 
     if (error) {
         alertStore.newAlert('Could not sign in. Try again.');
     }
+}
+
+async function adminSignIn() {
+    await modalStore.open(AdminSignInModal);
 }
 
 async function signout() {

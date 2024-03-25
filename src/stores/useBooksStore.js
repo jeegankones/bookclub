@@ -1,8 +1,11 @@
 import { defineStore } from 'pinia';
-import { archiveBook, getActiveBooksWithProfiles, submitBook } from '../api/books';
+import {
+    archiveActiveBooks,
+    archiveBook,
+    getActiveBooksWithProfiles,
+    submitBook,
+} from '../api/books';
 import { archiveVotesByBookId } from '../api/votes';
-import { getMostRecentWinningBook } from '../api/winningBooks';
-import { supabase } from '../lib/supabase';
 import { useAlertStore } from '../stores/useAlertStore';
 import { useModalStore } from './useModalStore';
 import { useSessionStore } from './useSessionStore';
@@ -10,7 +13,6 @@ import { useSessionStore } from './useSessionStore';
 export const useBooksStore = defineStore('books', {
     state: () => ({
         books: [],
-        currentlyReading: null,
         loadingStates: {},
     }),
     getters: {
@@ -28,16 +30,6 @@ export const useBooksStore = defineStore('books', {
         },
     },
     actions: {
-        async fetchCurrentlyReading() {
-            const { data, error } = await getMostRecentWinningBook();
-
-            if (error) {
-                useAlertStore().newAlert('Could not fetch current book. Try refreshing the page.');
-                return;
-            }
-
-            this.currentlyReading = data[0]?.books;
-        },
         async fetchBookList() {
             const { data, error } = await getActiveBooksWithProfiles();
 
@@ -60,7 +52,6 @@ export const useBooksStore = defineStore('books', {
                 return;
             }
 
-            await this.fetchBookList();
             this.loadingStates[id] = null;
         },
         async submitBook(book) {
@@ -74,47 +65,21 @@ export const useBooksStore = defineStore('books', {
                 useAlertStore().newAlert('Could not submit book. Try again.');
                 this.loadingStates[book.id] = null;
                 return;
-            } else {
-                modalStore.close();
             }
 
-            await this.fetchBookList();
+            await modalStore.close();
             this.loadingStates[book.id] = null;
         },
-        async updateUserVotes(votes) {
-            this.books.map((book) => (book.userVoteCount = 0));
-
-            votes.map((vote) => {
-                const bookWithVote = this.books.find((book) => book.id === vote.book_id);
-
-                if (bookWithVote.userVoteCount) {
-                    bookWithVote.userVoteCount++;
-                } else {
-                    bookWithVote.userVoteCount = 1;
-                }
-            });
-        },
-        async updateGlobalVoteCounts() {
-            const { data: globalVoteCounts, error } = await supabase.rpc(
-                'count_votes_group_by_book_id',
-            );
+        async archiveActiveBooks() {
+            const { error } = await archiveActiveBooks();
 
             if (error) {
                 useAlertStore().newAlert();
-                return;
+                throw new Error(error.message);
             }
-
-            this.books.forEach((book) => {
-                let matchingVoteCount = globalVoteCounts.find(
-                    (voteCount) => voteCount.book_id === book.id,
-                );
-
-                if (matchingVoteCount) {
-                    book.voteCount = matchingVoteCount.vote_count;
-                } else {
-                    book.voteCount = 0;
-                }
-            });
         },
+    },
+    debounce: {
+        fetchBookList: [250, { leading: true, trailing: false }],
     },
 });

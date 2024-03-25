@@ -4,4 +4,8 @@ function getSettings() {
     return supabase.from('settings').select('*');
 }
 
-export { getSettings };
+function updateSetting(setting, value) {
+    return supabase.from('settings').update({ value }).match({ setting });
+}
+
+export { getSettings, updateSetting };

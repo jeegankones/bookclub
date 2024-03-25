@@ -14,8 +14,14 @@ export const useSessionStore = defineStore('session', {
         userId: (state) => {
             return state.session?.user?.id;
         },
+        userName: (state) => {
+            return state.session?.user?.user_metadata.full_name;
+        },
         userAvatar: (state) => {
             return state.session?.user?.user_metadata.avatar_url;
+        },
+        userEmail: (state) => {
+            return state.session?.user?.email;
         },
     },
     actions: {
@@ -33,9 +39,10 @@ export const useSessionStore = defineStore('session', {
 
             if (error) {
                 useAlertStore().newAlert('Could not fetch user role. Try refreshing the page.');
+                return;
             }
 
-            this.userRole = data[0].role;
+            this.userRole = data.role;
         },
     },
 });

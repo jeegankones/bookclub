@@ -15,7 +15,8 @@
             >
                 <div
                     v-if="component"
-                    class="modal-box relative max-w-2xl"
+                    class="modal-box relative flex flex-col"
+                    :class="[fullSize ? 'max-w-full' : 'max-w-2xl']"
                 >
                     <label
                         class="btn btn-circle btn-sm absolute right-6 top-6"
@@ -66,6 +67,7 @@ const {
     cancelButtonText,
     okButtonCallback,
     cancelButtonCallback,
+    fullSize,
 } = storeToRefs(modalStore);
 
 const showChild = ref(false);

@@ -40,7 +40,6 @@ touch .env.local
 ```
 VITE_APP_SUPABASE_URL=""
 VITE_APP_SUPABASE_KEY=""
-VITE_APP_SUPABASE_REDIRECT_URL="http://localhost:3000/bookclub"
 # VITE_APP_GOOGLE_BOOKS_API_KEY=""
 ```
 
