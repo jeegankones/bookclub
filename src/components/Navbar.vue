@@ -72,7 +72,7 @@ async function signInWithDiscord() {
     const { error } = await supabase.auth.signInWithOAuth({
         provider: 'discord',
         options: {
-            redirectTo: import.meta.env.BASE_URL,
+            redirectTo: `${import.meta.env.BASE_URL}/bookclub`,
         },
     });
 
