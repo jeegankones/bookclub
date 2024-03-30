@@ -24,6 +24,10 @@
     .collapse-arrow .collapse-title:after {
         right: 0.25rem;
     }
+
+    .textarea {
+        @apply text-base;
+    }
 }
 
 .bounce-enter-active {
