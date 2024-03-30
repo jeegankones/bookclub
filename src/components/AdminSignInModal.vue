@@ -1,31 +1,36 @@
 <template>
     <h2 class="mb-2">Sign in</h2>
     <p class="mb-4 italic">For test users only</p>
-    <label class="input input-bordered mb-2 flex items-center gap-2">
-        Email
+    <form
+        class="form-control w-full"
+        @submit.prevent="signInWithEmail()"
+    >
+        <label class="label">
+            <span class="label-text">Email</span>
+        </label>
         <input
             ref="email"
             type="email"
-            class="grow bg-transparent"
+            class="input input-bordered w-full"
         />
-    </label>
-    <label class="input input-bordered flex items-center gap-2">
-        Password
+        <label class="label">
+            <span class="label-text">Password</span>
+        </label>
         <input
             ref="password"
             type="password"
-            class="grow bg-transparent"
+            class="input input-bordered w-full"
         />
-    </label>
-    <div class="modal-action">
-        <button class="btn btn-ghost">Cancel</button>
-        <button
-            class="btn"
-            @click="signInWithEmail()"
-        >
-            Sign in
-        </button>
-    </div>
+        <div class="modal-action">
+            <button class="btn btn-ghost">Cancel</button>
+            <button
+                type="submit"
+                class="btn"
+            >
+                Sign in
+            </button>
+        </div>
+    </form>
 </template>
 
 <script setup>
