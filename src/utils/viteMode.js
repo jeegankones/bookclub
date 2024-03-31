@@ -1,3 +1,4 @@
-const isLocal = import.meta.env.DEV && import.meta.env.MODE !== 'dev';
+const isLocal = import.meta.env.DEV && import.meta.env.MODE === 'localBackend';
+const isDev = import.meta.env.DEV && import.meta.env.MODE !== 'localBackend';
 
-export { isLocal };
+export { isDev, isLocal };
