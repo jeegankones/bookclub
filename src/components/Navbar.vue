@@ -28,24 +28,24 @@
                     >
                         <button
                             class="btn w-full"
-                            @click="signout"
+                            @click="signout()"
                         >
                             Sign out
-                        </button>
-                        <button
-                            v-if="userRole === 'admin'"
-                            class="btn mt-2 w-full"
-                            @click="adminSignIn"
-                        >
-                            Admin sign in
                         </button>
                     </div>
                 </div>
             </div>
             <button
+                v-else-if="isLocal"
+                class="btn"
+                @click="adminSignIn()"
+            >
+                Sign in
+            </button>
+            <button
                 v-else
                 class="btn"
-                @click="signInWithDiscord"
+                @click="signInWithDiscord()"
             >
                 Sign in
                 <i class="fab fa-discord ml-2"></i>
@@ -60,13 +60,14 @@ import { supabase } from '../lib/supabase';
 import { useAlertStore } from '../stores/useAlertStore';
 import { useModalStore } from '../stores/useModalStore';
 import { useSessionStore } from '../stores/useSessionStore';
+import { isLocal } from '../utils/viteMode';
 import AdminSignInModal from './AdminSignInModal.vue';
 
 const alertStore = useAlertStore();
 const sessionStore = useSessionStore();
 const modalStore = useModalStore();
 
-const { userAvatar, isLoggedIn, userRole, userEmail, userName } = storeToRefs(sessionStore);
+const { userAvatar, isLoggedIn, userEmail, userName } = storeToRefs(sessionStore);
 
 async function signInWithDiscord() {
     const { error } = await supabase.auth.signInWithOAuth({
@@ -81,8 +82,8 @@ async function signInWithDiscord() {
     }
 }
 
-async function adminSignIn() {
-    await modalStore.open(AdminSignInModal);
+function adminSignIn() {
+    modalStore.open(AdminSignInModal);
 }
 
 async function signout() {
