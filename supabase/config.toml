@@ -62,11 +62,4 @@ enable_confirmations = false
 # `discord`, `facebook`, `github`, `gitlab`, `google`, `keycloak`, `linkedin`, `notion`, `twitch`,
 # `twitter`, `slack`, `spotify`, `workos`, `zoom`.
 [auth.external.discord]
-enabled = true
-client_id = "1084228461197013072"
-secret = "uM09k1MoEOiiJQirXMP7WeQydQftPJtK"
-# Overrides the default auth redirectUrl.
-redirect_uri = "http://localhost:54321/auth/v1/callback"
-# Overrides the default auth provider URL. Used to support self-hosted gitlab, single-tenant Azure,
-# or any other third-party OIDC providers.
-url = ""
+enabled = false

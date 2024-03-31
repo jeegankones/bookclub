@@ -1,5 +1,5 @@
 <template>
-    <Modal v-if="isLoggedIn" />
+    <Modal />
     <Alert />
     <Navbar />
     <div class="mt-28">
