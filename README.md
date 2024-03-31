@@ -33,7 +33,11 @@ npm run dev
 
 5. Navigate to `http://localhost:3000/bookclub` to view the application.
 
-> On Dev you can sign in with a discord account just like in Prod. If you would like your user to have Admin privileges in Dev please contact _jeegankones_.
+6. Sign in either with one of our test users or through your personal Discord account.
+
+> Test users include user1@test.com through user5@test.com. All test users use password `Test!@#4`.
+
+> If you would like your personal Discord account to have Admin privileges in Dev please contact _jeegankones_.
 
 ## Connect to a local Supabase instance
 
@@ -68,11 +72,11 @@ VITE_APP_SUPABASE_KEY=""
 # VITE_APP_GOOGLE_BOOKS_API_KEY=""
 ```
 
-> Use your Supabase `API URL` for `VITE_APP_SUPABASE_URL`
+-   Use your Supabase `API URL` for `VITE_APP_SUPABASE_URL`
 
-> Use your Supabase `anon key` for `VITE_APP_SUPABASE_KEY`
+-   Use your Supabase `anon key` for `VITE_APP_SUPABASE_KEY`
 
-> `VITE_APP_GOOGLE_BOOKS_API_KEY` is _optional_. This will protect you from intermittent API quota errors. You can create a free key at [https://console.cloud.google.com/apis](https://console.cloud.google.com/apis). Do not share your key.
+-   `VITE_APP_GOOGLE_BOOKS_API_KEY` is _optional_. This will protect you from intermittent API quota errors. You can create a free key at [https://console.cloud.google.com/apis](https://console.cloud.google.com/apis). Do not share your key.
 
 4. Navigate to the Supabase `Studio URL` to see your local Supabase dashboard.
 
@@ -82,8 +86,9 @@ VITE_APP_SUPABASE_KEY=""
 
 6. Sign in with one of the test users. You can find a list of seeded test users in the public.profiles table.
 
-    - All users use password `Test!@#4` by default.
-    - Grant admin privileges to any user by entering `admin` in the role column in public.profiles.
+> All users use password `Test!@#4` by default.
+
+> Grant admin privileges to any user by entering `admin` in the role column in the public.profiles table.
 
 7. To run the app on your local Supabase instance use the following command.
 
