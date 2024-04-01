@@ -6,7 +6,7 @@
         >
             <div
                 v-if="book.voteCount"
-                class="absolute -left-1 -top-1 flex h-8 w-8 items-center justify-center rounded-full bg-error font-bold"
+                class="absolute -left-1 -top-1 flex size-8 items-center justify-center rounded-full bg-error font-bold"
             >
                 {{ book.voteCount }}
             </div>

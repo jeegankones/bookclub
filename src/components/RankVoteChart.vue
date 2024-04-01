@@ -5,7 +5,7 @@
             :key="voteRatio.weight"
             class="relative my-1 h-2 w-full overflow-hidden rounded"
         >
-            <div class="absolute h-full w-full bg-gray-600"></div>
+            <div class="absolute size-full bg-gray-600"></div>
             <div
                 class="absolute h-full overflow-hidden rounded transition-width"
                 :class="weightColorClasses[voteRatio.weight]"
