@@ -1,6 +1,5 @@
 <template>
-    <Card small>
-        <template #title>Currently reading</template>
+    <Card small title="Currently reading">
         <BookCard :book="currentlyReading" size="lg"></BookCard>
     </Card>
 </template>

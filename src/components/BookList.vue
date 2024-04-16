@@ -1,9 +1,9 @@
 <template>
     <Card>
-        <template #title>
+        <h2 class="card-title">
             Submitted books
-            <span v-if="bookList.length">({{ bookList.length }})</span>
-        </template>
+            <span v-if="books.length">({{ books.length }})</span>
+        </h2>
         <div v-if="books.length > 0" class="grid grid-cols-1 items-start gap-3 md:grid-cols-2">
             <TransitionGroup name="bounce">
                 <BookCard v-for="book in books" :key="book.id" :book="book">

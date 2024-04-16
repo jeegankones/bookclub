@@ -1,7 +1,6 @@
 <template>
     <div class="container mx-auto">
-        <Card>
-            <template #title>Admin</template>
+        <Card title="Admin">
             <div>
                 <button v-if="!voting" class="btn btn-success mr-2" @click="updateVoting(true)">
                     Start voting

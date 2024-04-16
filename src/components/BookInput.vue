@@ -1,6 +1,5 @@
 <template>
-    <Card small>
-        <template #title>Submit a book</template>
+    <Card small title="Submit a book">
         <input
             ref="bookElement"
             v-model="bookInput"
