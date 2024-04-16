@@ -1,23 +1,14 @@
 <template>
     <h2 class="mb-4 font-bold">Submit your book</h2>
     <div class="mb-4 flex flex-row items-center gap-4">
-        <div
-            v-if="bookInfo.imageLinks"
-            class="w-12 flex-none overflow-hidden rounded md:w-16"
-        >
-            <img
-                :src="bookInfo.imageLinks.smallThumbnail"
-                alt="Book cover"
-            />
+        <div v-if="bookInfo.imageLinks" class="w-12 flex-none overflow-hidden rounded md:w-16">
+            <img :src="bookInfo.imageLinks.smallThumbnail" alt="Book cover" />
         </div>
         <div class="min-w-0">
             <h3 class="text-sm md:text-base">
                 {{ bookInfo.title }}
             </h3>
-            <p
-                v-if="bookInfo.authors"
-                class="text-sm text-gray-400 md:text-base"
-            >
+            <p v-if="bookInfo.authors" class="text-sm text-gray-400 md:text-base">
                 {{ bookInfo.authors[0] }}
             </p>
             <p class="mt-1 text-xs text-gray-400 md:text-sm">
@@ -43,21 +34,9 @@
         ></textarea>
     </div>
     <div class="modal-action">
-        <button
-            class="btn btn-ghost"
-            @click="modalStore.close()"
-        >
-            Cancel
-        </button>
-        <button
-            class="btn"
-            :disabled="isSubmitLoading(book.id)"
-            @click="submitBook"
-        >
-            <Spinner
-                v-if="isSubmitLoading(book.id)"
-                size="xs"
-            />
+        <button class="btn btn-ghost" @click="modalStore.close()">Cancel</button>
+        <button class="btn" :disabled="isSubmitLoading(book.id)" @click="submitBook">
+            <Spinner v-if="isSubmitLoading(book.id)" size="xs" />
             <span v-else>Submit</span>
         </button>
     </div>

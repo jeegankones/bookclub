@@ -3,23 +3,14 @@
     <Alert />
     <Navbar />
     <div class="mt-28">
-        <div
-            v-if="!loading"
-            class="container mx-auto mb-5 space-y-5 px-2"
-        >
-            <AdminBar
-                v-if="userRole === 'admin'"
-                :voting="voting"
-            />
+        <div v-if="!loading" class="container mx-auto mb-5 space-y-5 px-2">
+            <AdminBar v-if="userRole === 'admin'" :voting="voting" />
             <CurrentlyReading v-if="isCurrentlyReadingVisible" />
             <BookInput v-if="!voting && isLoggedIn" />
             <VotingBookList v-if="voting && isLoggedIn" />
             <BookList v-else />
         </div>
-        <div
-            v-else
-            class="absolute top-0 flex h-screen w-screen items-center justify-center"
-        >
+        <div v-else class="absolute top-0 flex h-screen w-screen items-center justify-center">
             <Spinner size="lg" />
         </div>
     </div>

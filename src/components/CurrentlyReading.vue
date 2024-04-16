@@ -1,10 +1,7 @@
 <template>
     <Card small>
         <template #title>Currently reading</template>
-        <BookCard
-            :book="currentlyReading"
-            size="lg"
-        ></BookCard>
+        <BookCard :book="currentlyReading" size="lg"></BookCard>
     </Card>
 </template>
 

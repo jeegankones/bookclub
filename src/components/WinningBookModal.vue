@@ -7,10 +7,7 @@
         :votes-by-book-id="votesByBookId"
         @close="showWheel = false"
     />
-    <div
-        v-else-if="winningBook"
-        class="flex flex-col items-center text-center"
-    >
+    <div v-else-if="winningBook" class="flex flex-col items-center text-center">
         <p class="mb-2 text-2xl font-bold">
             {{ winningBook.title }}
         </p>
@@ -23,10 +20,7 @@
         />
         <p class="text-gray-400">Submitted by {{ winningBook.profiles.full_name }}</p>
     </div>
-    <div
-        v-else
-        class="flex justify-center"
-    >
+    <div v-else class="flex justify-center">
         <Spinner />
     </div>
 </template>

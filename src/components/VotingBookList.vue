@@ -31,27 +31,13 @@
                         @click="openSubmitModal()"
                     >
                         <span>Submit vote{{ step > 1 ? 's' : '' }}</span>
-                        <Spinner
-                            v-if="isSubmitLoading"
-                            size="xs"
-                        />
+                        <Spinner v-if="isSubmitLoading" size="xs" />
                     </button>
                 </div>
             </div>
-            <div
-                v-if="!isFetchLoading"
-                class="grid grid-cols-1 items-start gap-3 md:grid-cols-2"
-            >
-                <BookCard
-                    v-for="book in books"
-                    :key="book.id"
-                    :book="book"
-                    voting
-                >
-                    <template
-                        v-if="getStepByBookId(book.id) || canVote(book)"
-                        #buttons
-                    >
+            <div v-if="!isFetchLoading" class="grid grid-cols-1 items-start gap-3 md:grid-cols-2">
+                <BookCard v-for="book in books" :key="book.id" :book="book" voting>
+                    <template v-if="getStepByBookId(book.id) || canVote(book)" #buttons>
                         <div
                             v-if="getStepByBookId(book.id)"
                             :aria-label="`selected ${getStepByBookId(book.id).label}`"
@@ -68,10 +54,7 @@
                             <span class="opacity-60">{{ voteStep.emoji }}</span>
                         </button>
                     </template>
-                    <template
-                        v-if="areVotesSubmitted"
-                        #statistics
-                    >
+                    <template v-if="areVotesSubmitted" #statistics>
                         <RankVoteChart
                             v-if="globalVoteRatiosByBookId[book.id]"
                             :vote-ratios="globalVoteRatiosByBookId[book.id]"
@@ -84,10 +67,7 @@
                     </template>
                 </BookCard>
             </div>
-            <div
-                v-else
-                class="flex justify-center p-16"
-            >
+            <div v-else class="flex justify-center p-16">
                 <Spinner size="lg" />
             </div>
         </div>

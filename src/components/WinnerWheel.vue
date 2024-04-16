@@ -1,15 +1,7 @@
 <template>
     <div class="relative mx-auto inline-flex items-center justify-center overflow-hidden">
-        <svg
-            ref="selectorSvg"
-            class="absolute z-10 overflow-visible"
-            width="10%"
-        ></svg>
-        <svg
-            ref="chartSvg"
-            :width="diameter"
-            :height="diameter"
-        ></svg>
+        <svg ref="selectorSvg" class="absolute z-10 overflow-visible" width="10%"></svg>
+        <svg ref="chartSvg" :width="diameter" :height="diameter"></svg>
     </div>
 </template>
 

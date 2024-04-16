@@ -1,10 +1,7 @@
 <template>
     <h2 class="mb-4 font-bold">Submit your vote</h2>
     <p class="mb-2">Once you submit you cannot change your votes.</p>
-    <p
-        v-if="step < 3"
-        class="mb-2 font-bold"
-    >
+    <p v-if="step < 3" class="mb-2 font-bold">
         You have not selected a choice for {{ incompleteSteps }}.
     </p>
 </template>

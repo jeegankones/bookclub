@@ -9,11 +9,7 @@
             class="input w-full"
         />
         <ul>
-            <li
-                v-for="result in results"
-                :key="result.id"
-                class="card my-2 bg-base-100"
-            >
+            <li v-for="result in results" :key="result.id" class="card my-2 bg-base-100">
                 <div class="card-body p-3 md:p-4">
                     <div class="flex flex-row items-center gap-3 md:gap-4">
                         <div
@@ -55,14 +51,8 @@
                             :disabled="isButtonDisabled(result)"
                             @click="openNoteInputModal(result)"
                         >
-                            <Spinner
-                                v-if="isSubmitLoading(result.id)"
-                                size="xs"
-                            />
-                            <i
-                                v-else
-                                class="far fa-plus"
-                            ></i>
+                            <Spinner v-if="isSubmitLoading(result.id)" size="xs" />
+                            <i v-else class="far fa-plus"></i>
                         </button>
                     </div>
                     <Collapse

@@ -3,25 +3,13 @@
         <Card>
             <template #title>Admin</template>
             <div>
-                <button
-                    v-if="!voting"
-                    class="btn btn-success mr-2"
-                    @click="updateVoting(true)"
-                >
+                <button v-if="!voting" class="btn btn-success mr-2" @click="updateVoting(true)">
                     Start voting
                 </button>
-                <button
-                    v-if="voting"
-                    class="btn btn-error mr-2"
-                    @click="updateVoting(false)"
-                >
+                <button v-if="voting" class="btn btn-error mr-2" @click="updateVoting(false)">
                     Cancel voting
                 </button>
-                <button
-                    v-if="voting"
-                    class="btn btn-primary mr-2"
-                    @click="confirmPickWinner()"
-                >
+                <button v-if="voting" class="btn btn-primary mr-2" @click="confirmPickWinner()">
                     Pick winner
                 </button>
             </div>

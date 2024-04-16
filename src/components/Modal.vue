@@ -23,14 +23,8 @@
                         @click="modalStore.close()"
                         ><i class="fas fa-xmark"></i
                     ></label>
-                    <component
-                        :is="component"
-                        v-bind="componentProps"
-                    ></component>
-                    <div
-                        v-if="hasOkButton || hasCancelButton"
-                        class="modal-action"
-                    >
+                    <component :is="component" v-bind="componentProps"></component>
+                    <div v-if="hasOkButton || hasCancelButton" class="modal-action">
                         <button
                             v-if="hasCancelButton"
                             class="btn btn-ghost"
@@ -38,11 +32,7 @@
                         >
                             {{ cancelButtonText }}
                         </button>
-                        <button
-                            v-if="hasOkButton"
-                            class="btn"
-                            @click="okButtonCallback()"
-                        >
+                        <button v-if="hasOkButton" class="btn" @click="okButtonCallback()">
                             {{ okButtonText }}
                         </button>
                     </div>

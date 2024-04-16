@@ -4,16 +4,9 @@
             Submitted books
             <span v-if="bookList.length">({{ bookList.length }})</span>
         </template>
-        <div
-            v-if="books.length > 0"
-            class="grid grid-cols-1 items-start gap-3 md:grid-cols-2"
-        >
+        <div v-if="books.length > 0" class="grid grid-cols-1 items-start gap-3 md:grid-cols-2">
             <TransitionGroup name="bounce">
-                <BookCard
-                    v-for="book in books"
-                    :key="book.id"
-                    :book="book"
-                >
+                <BookCard v-for="book in books" :key="book.id" :book="book">
                     <template #buttons>
                         <button
                             v-if="userRole === 'admin' || userId === book.submitted_by"
@@ -21,25 +14,14 @@
                             :disabled="isArchiveLoading(book.id)"
                             @click="booksStore.archiveBook(book.id)"
                         >
-                            <Spinner
-                                v-if="isArchiveLoading(book.id)"
-                                size="xs"
-                            />
-                            <i
-                                v-else
-                                class="far fa-trash-can"
-                            ></i>
+                            <Spinner v-if="isArchiveLoading(book.id)" size="xs" />
+                            <i v-else class="far fa-trash-can"></i>
                         </button>
                     </template>
                 </BookCard>
             </TransitionGroup>
         </div>
-        <div
-            v-else
-            class="my-4 flex justify-center text-gray-400"
-        >
-            Submit the first book 🙂
-        </div>
+        <div v-else class="my-4 flex justify-center text-gray-400">Submit the first book 🙂</div>
     </Card>
 </template>
 

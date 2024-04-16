@@ -1,8 +1,5 @@
 <template>
-    <div
-        v-if="size === 'xs'"
-        role="status"
-    >
+    <div v-if="size === 'xs'" role="status">
         <svg
             aria-hidden="true"
             class="inline size-4 animate-spin fill-primary text-gray-200 dark:text-gray-600"
@@ -21,10 +18,7 @@
         </svg>
         <span class="sr-only">Loading...</span>
     </div>
-    <div
-        v-if="size === 'sm'"
-        role="status"
-    >
+    <div v-if="size === 'sm'" role="status">
         <svg
             aria-hidden="true"
             class="inline size-6 animate-spin fill-primary text-gray-200 dark:text-gray-600"
@@ -43,10 +37,7 @@
         </svg>
         <span class="sr-only">Loading...</span>
     </div>
-    <div
-        v-if="size === 'md'"
-        role="status"
-    >
+    <div v-if="size === 'md'" role="status">
         <svg
             aria-hidden="true"
             class="inline size-8 animate-spin fill-primary text-gray-200 dark:text-gray-600"
@@ -65,10 +56,7 @@
         </svg>
         <span class="sr-only">Loading...</span>
     </div>
-    <div
-        v-if="size === 'lg'"
-        role="status"
-    >
+    <div v-if="size === 'lg'" role="status">
         <svg
             aria-hidden="true"
             class="inline size-10 animate-spin fill-primary text-gray-200 dark:text-gray-600"

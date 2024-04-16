@@ -1,9 +1,6 @@
 <template>
     <div class="card bg-base-100">
-        <Transition
-            v-if="voting"
-            name="bounce"
-        >
+        <Transition v-if="voting" name="bounce">
             <div
                 v-if="book.voteCount"
                 class="absolute -left-1 -top-1 flex size-8 items-center justify-center rounded-full bg-error font-bold"
@@ -11,40 +8,23 @@
                 {{ book.voteCount }}
             </div>
         </Transition>
-        <div
-            class="card-body p-4"
-            :class="{ 'md:p-6': size === 'lg' }"
-        >
-            <div
-                class="flex items-center gap-4"
-                :class="{ 'md:gap-8': size === 'lg' }"
-            >
+        <div class="card-body p-4" :class="{ 'md:p-6': size === 'lg' }">
+            <div class="flex items-center gap-4" :class="{ 'md:gap-8': size === 'lg' }">
                 <div
                     v-if="size === 'lg' && book.thumbnail"
                     class="w-24 flex-none overflow-hidden rounded"
                     :class="{ 'md:w-32': size === 'lg' }"
                 >
-                    <img
-                        class="w-full"
-                        :src="book.thumbnail"
-                        alt="Book cover"
-                    />
+                    <img class="w-full" :src="book.thumbnail" alt="Book cover" />
                 </div>
                 <div
                     v-else-if="book.small_thumbnail"
                     class="w-24 flex-none overflow-hidden rounded"
                 >
-                    <img
-                        class="w-full"
-                        :src="book.small_thumbnail"
-                        alt="Book cover"
-                    />
+                    <img class="w-full" :src="book.small_thumbnail" alt="Book cover" />
                 </div>
                 <div>
-                    <h3
-                        class="text-sm"
-                        :class="{ 'md:text-lg': size === 'lg' }"
-                    >
+                    <h3 class="text-sm" :class="{ 'md:text-lg': size === 'lg' }">
                         {{ book.title }}
                     </h3>
                     <p
@@ -54,10 +34,7 @@
                     >
                         {{ book.author }}
                     </p>
-                    <p
-                        class="text-sm text-gray-400"
-                        :class="{ 'md:text-lg': size === 'lg' }"
-                    >
+                    <p class="text-sm text-gray-400" :class="{ 'md:text-lg': size === 'lg' }">
                         <span v-if="book.published_date">{{
                             formatDateYear(book.published_date)
                         }}</span>
@@ -74,10 +51,7 @@
                         Submitted by {{ book.profiles.full_name }}
                     </p>
                 </div>
-                <div
-                    class="ml-auto"
-                    :class="{ 'self-start': $slots.buttons }"
-                >
+                <div class="ml-auto" :class="{ 'self-start': $slots.buttons }">
                     <slot name="buttons"></slot>
                     <slot name="statistics"></slot>
                 </div>

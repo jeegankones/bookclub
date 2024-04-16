@@ -5,20 +5,12 @@
             <div v-if="isLoggedIn">
                 <div class="dropdown dropdown-end">
                     <label tabindex="0">
-                        <button
-                            v-if="userAvatar"
-                            :title="userName"
-                            class="avatar"
-                        >
+                        <button v-if="userAvatar" :title="userName" class="avatar">
                             <div class="flex w-12 rounded-full">
                                 <img :src="userAvatar" />
                             </div>
                         </button>
-                        <button
-                            v-else
-                            class="btn btn-neutral"
-                            :title="userEmail"
-                        >
+                        <button v-else class="btn btn-neutral" :title="userEmail">
                             {{ userEmail }}
                         </button>
                     </label>
@@ -26,26 +18,12 @@
                         tabindex="0"
                         class="dropdown-content rounded-box w-52 bg-base-100 p-2 shadow-lg"
                     >
-                        <button
-                            class="btn w-full"
-                            @click="signout()"
-                        >
-                            Sign out
-                        </button>
+                        <button class="btn w-full" @click="signout()">Sign out</button>
                     </div>
                 </div>
             </div>
-            <button
-                v-else-if="isLocal"
-                class="btn"
-                @click="adminSignIn()"
-            >
-                Sign in
-            </button>
-            <div
-                v-else-if="isDev"
-                class="dropdown dropdown-end"
-            >
+            <button v-else-if="isLocal" class="btn" @click="adminSignIn()">Sign in</button>
+            <div v-else-if="isDev" class="dropdown dropdown-end">
                 <label tabindex="0">
                     <button class="btn">Sign in</button>
                 </label>
@@ -53,26 +31,14 @@
                     tabindex="0"
                     class="dropdown-content rounded-box w-52 bg-base-100 p-2 shadow-lg"
                 >
-                    <button
-                        class="btn mb-2 w-full"
-                        @click="signInWithDiscord()"
-                    >
+                    <button class="btn mb-2 w-full" @click="signInWithDiscord()">
                         Discord
                         <i class="fab fa-discord ml-2"></i>
                     </button>
-                    <button
-                        class="btn w-full"
-                        @click="adminSignIn()"
-                    >
-                        Test user
-                    </button>
+                    <button class="btn w-full" @click="adminSignIn()">Test user</button>
                 </div>
             </div>
-            <button
-                v-else
-                class="btn"
-                @click="signInWithDiscord()"
-            >
+            <button v-else class="btn" @click="signInWithDiscord()">
                 Sign in
                 <i class="fab fa-discord ml-2"></i>
             </button>

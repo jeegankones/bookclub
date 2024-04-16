@@ -1,10 +1,7 @@
 <template>
     <Teleport to="body">
         <Transition>
-            <div
-                v-if="alertStore.show"
-                class="alert alert-error fixed bottom-0 z-50 shadow-lg"
-            >
+            <div v-if="alertStore.show" class="alert alert-error fixed bottom-0 z-50 shadow-lg">
                 <i class="fa-solid fa-circle-exclamation"></i>
                 <span>{{ alertStore.message }}</span>
             </div>
