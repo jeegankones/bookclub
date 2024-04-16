@@ -12,10 +12,15 @@ module.exports = {
         'plugin:prettier/recommended',
     ],
     rules: {
+        'func-style': ['error', 'declaration', { allowArrowFunctions: true }],
         'prettier/prettier': 'warn',
-        'simple-import-sort/imports': 'error',
+        'simple-import-sort/imports': [
+            'error',
+            { groups: [['^\\u0000', '^node:', '^@?\\w', '^', '^\\.']] },
+        ],
         'simple-import-sort/exports': 'error',
         'vue/multi-word-component-names': 'off',
+        'vue/static-class-names-order': 'off',
         'tailwindcss/no-custom-classname': 'off',
     },
 };

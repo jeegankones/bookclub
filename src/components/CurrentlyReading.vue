@@ -9,11 +9,12 @@
 </template>
 
 <script setup>
-import { toRef } from 'vue';
-
-import { useBookList } from '../stores/useBookList';
+import { storeToRefs } from 'pinia';
+import { useWinningBooksStore } from '../stores/useWinningBooksStore';
 import BookCard from './BookCard.vue';
 import Card from './Card.vue';
 
-const currentlyReading = toRef(useBookList, 'currentlyReading');
+const winningBooksStore = useWinningBooksStore();
+
+const { currentlyReading } = storeToRefs(winningBooksStore);
 </script>

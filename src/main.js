@@ -1,13 +1,11 @@
 import './style.css';
-
+import { PiniaDebounce } from '@pinia/plugin-debounce';
+import debounce from 'lodash/debounce';
+import { createPinia } from 'pinia';
 import { createApp } from 'vue';
-
 import App from './App.vue';
-import { setProfile, supabase, userSession } from './lib/supabase';
 
-createApp(App).mount('#app');
+const pinia = createPinia();
+pinia.use(PiniaDebounce(debounce));
 
-supabase.auth.onAuthStateChange(async (event, session) => {
-    userSession.value = session;
-    await setProfile();
-});
+createApp(App).use(pinia).mount('#app');

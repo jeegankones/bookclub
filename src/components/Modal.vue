@@ -1,66 +1,83 @@
 <template>
-    <div
-        v-show="showChild"
-        class="modal"
-        :class="{ 'modal-open': useModal.isOpen }"
-        @click.self="useModal.close()"
-    >
-        <Transition
-            name="bounce"
-            mode="out-in"
-            @enter="showChild = true"
-            @after-enter="afterEnter()"
-            @after-leave="afterLeave()"
+    <Teleport to="body">
+        <div
+            v-show="showChild"
+            class="modal z-40"
+            :class="{ 'modal-open': component }"
+            @click.self="modalStore.close()"
         >
-            <div
-                v-if="useModal.isOpen"
-                class="modal-box relative max-w-2xl"
+            <Transition
+                name="bounce"
+                mode="out-in"
+                @enter="showChild = true"
+                @after-enter="afterEnter()"
+                @after-leave="afterLeave()"
             >
-                <label
-                    class="btn btn-circle btn-sm absolute right-6 top-6"
-                    @click="useModal.close()"
-                    ><i class="fas fa-xmark"></i
-                ></label>
-                <component
-                    :is="useModal.view"
-                    v-if="useModal.model"
-                    v-model="useModal.model"
-                ></component>
-                <component
-                    :is="useModal.view"
-                    v-if="!useModal.model"
-                ></component>
                 <div
-                    v-if="useModal.actions.length"
-                    class="modal-action"
+                    v-if="component"
+                    class="modal-box relative flex flex-col"
+                    :class="[fullSize ? 'max-w-full' : 'max-w-2xl']"
                 >
-                    <button
-                        v-for="(action, index) in useModal.actions"
-                        :key="index"
-                        class="btn"
-                        @click="action.callback()"
+                    <label
+                        class="btn btn-circle btn-sm absolute right-6 top-6"
+                        @click="modalStore.close()"
+                        ><i class="fas fa-xmark"></i
+                    ></label>
+                    <component
+                        :is="component"
+                        v-bind="componentProps"
+                    ></component>
+                    <div
+                        v-if="hasOkButton || hasCancelButton"
+                        class="modal-action"
                     >
-                        {{ action.label }}
-                    </button>
+                        <button
+                            v-if="hasCancelButton"
+                            class="btn btn-ghost"
+                            @click="cancelButtonCallback()"
+                        >
+                            {{ cancelButtonText }}
+                        </button>
+                        <button
+                            v-if="hasOkButton"
+                            class="btn"
+                            @click="okButtonCallback()"
+                        >
+                            {{ okButtonText }}
+                        </button>
+                    </div>
                 </div>
-            </div>
-        </Transition>
-    </div>
+            </Transition>
+        </div>
+    </Teleport>
 </template>
 
 <script setup>
+import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
+import { useModalStore } from '../stores/useModalStore';
 
-import { useModal } from '../stores/useModal';
+const modalStore = useModalStore();
+const {
+    component,
+    componentProps,
+    hasOkButton,
+    hasCancelButton,
+    okButtonText,
+    cancelButtonText,
+    okButtonCallback,
+    cancelButtonCallback,
+    fullSize,
+} = storeToRefs(modalStore);
 
 const showChild = ref(false);
 
 function afterEnter() {
-    useModal.afterEnter = true;
+    modalStore.afterEnter = true;
 }
 
 function afterLeave() {
     showChild.value = false;
-    useModal.afterEnter = false;
+    modalStore.afterEnter = false;
 }
 </script>

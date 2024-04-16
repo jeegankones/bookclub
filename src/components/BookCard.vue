@@ -6,7 +6,7 @@
         >
             <div
                 v-if="book.voteCount"
-                class="absolute -left-1 -top-1 flex h-8 w-8 items-center justify-center rounded-full bg-error font-bold"
+                class="absolute -left-1 -top-1 flex size-8 items-center justify-center rounded-full bg-error font-bold"
             >
                 {{ book.voteCount }}
             </div>
@@ -16,7 +16,7 @@
             :class="{ 'md:p-6': size === 'lg' }"
         >
             <div
-                class="flex flex-row items-center gap-4"
+                class="flex items-center gap-4"
                 :class="{ 'md:gap-8': size === 'lg' }"
             >
                 <div
@@ -67,17 +67,23 @@
                         </span>
                     </p>
                     <p
-                        v-if="userSession"
+                        v-if="isLoggedIn"
                         class="mt-2 text-xs text-gray-400"
                         :class="{ 'md:text-sm': size === 'lg' }"
                     >
                         Submitted by {{ book.profiles.full_name }}
                     </p>
                 </div>
-                <slot name="buttons"></slot>
+                <div
+                    class="ml-auto"
+                    :class="{ 'self-start': $slots.buttons }"
+                >
+                    <slot name="buttons"></slot>
+                    <slot name="statistics"></slot>
+                </div>
             </div>
             <div
-                v-if="book.user_note && userSession"
+                v-if="book.user_note && isLoggedIn"
                 class="mt-2 text-sm italic text-gray-400"
                 :class="{ 'md:text-lg': size === 'lg' }"
             >
@@ -95,13 +101,18 @@
 </template>
 
 <script setup>
-import { userSession } from '../lib/supabase';
+import { storeToRefs } from 'pinia';
+import { useSessionStore } from '../stores/useSessionStore';
 import { formatDateYear } from '../utils/formatDateYear';
 import Collapse from './Collapse.vue';
+
+const sessionStore = useSessionStore();
 
 defineProps({
     book: { type: Object, default: null },
     size: { type: String, default: 'md' },
     voting: Boolean,
 });
+
+const { isLoggedIn } = storeToRefs(sessionStore);
 </script>
