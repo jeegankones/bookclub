@@ -3,7 +3,7 @@
         <div class="container mx-auto flex justify-between px-4 py-2">
             <h1 class="my-2 font-bold">Book Club</h1>
             <div v-if="isLoggedIn">
-                <div class="dropdown-end dropdown">
+                <div class="dropdown dropdown-end">
                     <label tabindex="0">
                         <button
                             v-if="userAvatar"
@@ -42,6 +42,32 @@
             >
                 Sign in
             </button>
+            <div
+                v-else-if="isDev"
+                class="dropdown dropdown-end"
+            >
+                <label tabindex="0">
+                    <button class="btn">Sign in</button>
+                </label>
+                <div
+                    tabindex="0"
+                    class="dropdown-content rounded-box w-52 bg-base-100 p-2 shadow-lg"
+                >
+                    <button
+                        class="btn mb-2 w-full"
+                        @click="signInWithDiscord()"
+                    >
+                        Discord
+                        <i class="fab fa-discord ml-2"></i>
+                    </button>
+                    <button
+                        class="btn w-full"
+                        @click="adminSignIn()"
+                    >
+                        Test user
+                    </button>
+                </div>
+            </div>
             <button
                 v-else
                 class="btn"
@@ -60,7 +86,7 @@ import { supabase } from '../lib/supabase';
 import { useAlertStore } from '../stores/useAlertStore';
 import { useModalStore } from '../stores/useModalStore';
 import { useSessionStore } from '../stores/useSessionStore';
-import { isLocal } from '../utils/viteMode';
+import { isDev, isLocal } from '../utils/viteMode';
 import AdminSignInModal from './AdminSignInModal.vue';
 
 const alertStore = useAlertStore();
