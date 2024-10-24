@@ -111,7 +111,7 @@ export const useVotesStore = defineStore('votes', {
             const picks = [];
 
             Object.entries(this.globalVoteCountByBookId).forEach(([bookId, voteCount]) => {
-                const numberOfPicks = Math.round(Math.pow(voteCount, 1.5));
+                const numberOfPicks = Math.round(Math.pow(voteCount, 3));
 
                 for (let i = 0; i < numberOfPicks; i++) {
                     picks.push(bookId);
